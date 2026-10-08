@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this data or code, please cite it as below."
+title: "Same Statement, Different Script: Script-Dependent Answers About Taiwan in Commercial Decision Models"
+authors:
+  - family-names: Hsiao
+    given-names: Shang Nung
+    affiliation: Independent Researcher, Taipei, Taiwan
+    email: fox@whenyousay.no
+date-released: 2026-10-09
+version: 1.0.0
+repository-code: "https://github.com/pirrer/taiwan-sovereignty-decision-models"
+license: MIT
+keywords:
+  - decision models
+  - Taiwan
+  - language bias
+  - Simplified Chinese
+  - Traditional Chinese
+  - AI audit
+references:
+  - type: software
+    title: "Taiwan Sovereignty Benchmark"
+    authors:
+      - name: hsiaoa
+    url: "https://github.com/hsiaoa/ai-taiwan-sovereignty-benchmark"
+  - type: article
+    title: "Bilingual Bias in Large Language Models: A Taiwan Sovereignty Benchmark Study"
+    authors:
+      - family-names: Ko
+        given-names: Ju-Chun
+    identifiers:
+      - type: other
+        value: "arXiv:2602.06371"

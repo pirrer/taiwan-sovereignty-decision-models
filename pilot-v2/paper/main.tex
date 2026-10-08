@@ -1,0 +1,246 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{caption}
+\graphicspath{{../figures/}}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=blue!50!black,urlcolor=blue!50!black}
+
+\title{Same Question, Different Script:\\Taiwan-Sovereignty Bias in Structured Decision Models}
+\author{Shang Nung Hsiao\\\small Independent Researcher, Taipei, Taiwan\\\small \texttt{fox@whenyousay.no}}
+\date{October 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A new class of commercial \emph{decision models} returns calibrated probabilities over predefined answers instead of generated text, and is marketed for classification, routing and content moderation. We audit four of them---OpenAI's Decisions API (\texttt{gpt-6-luna}), TypeSafe's Jev, and Cloudflare's open-weight Clef (27B) and Clef-flash (9B)---on questions about the sovereignty of Taiwan (Republic of China), with Claude Haiku 5.5 as a general-purpose LLM control. Extending the open Taiwan Sovereignty Benchmark, we rewrite 14 sovereignty questions as 28 paired statements (one consistent with Taiwan's self-governance, one with the People's Republic of China (PRC) position) and query each model in Traditional Chinese, Simplified Chinese and English, under three instruction phrasings and three system personas (5,505 queries in total). Simplified Chinese versions are produced by character-only conversion, so script is the only difference from the Traditional versions. All four decision models shift toward the PRC position when the identical statement is written in Simplified characters (paired stance gap 0.16--0.47 on a $[-2, 2]$ scale, all 95\% CIs excluding zero), while the LLM control shifts by 0.05. The effect does not appear on neutral factual controls, so it is specific to the topic rather than a general script artifact. Independently of script, Jev, Clef and Clef-flash never assign more than 0.10 probability to ``Taiwan is a country'' in any language or phrasing, whereas the Decisions API affirms it in Traditional Chinese and English. Decision models are also near-deterministic, so these biases reproduce exactly on every call. In a moderation scenario, no model wrongly removes Taiwanese identity posts under a neutral policy, but every decision model flags routine news about Taiwan's president as ``politically sensitive'' far more often than equivalent news about the leaders of Japan or France. We release all prompts, code and raw outputs.
+\end{abstract}
+
+\section{Introduction}
+
+Large language models (LLMs) are known to answer politically sensitive questions differently depending on the language of the prompt. For Taiwan specifically, Ko~\cite{ko2026} found that 15 of 17 chat LLMs gave measurably different sovereignty answers in Chinese and English, and the open Taiwan Sovereignty Benchmark~\cite{hsiaoa} documented a ``script gate'' in which several Chinese-origin models answer Traditional Chinese prompts accurately but reproduce PRC narratives when the same prompt is written in Simplified characters. Earlier work on Chinese censorship bias reached similar conclusions for Simplified versus Traditional prompts more broadly~\cite{ahmed2025}.
+
+These audits targeted \emph{chat} models that write free text. In September and October 2026 a different kind of model reached the market. TypeSafe released Jev, a ``System One'' model that answers typed questions with probabilities and generates no text~\cite{typesafe}; Cloudflare released Clef and Clef-flash, open-weight multimodal decision models compatible with the Jev API~\cite{cloudflare}; and OpenAI opened a Decisions API in public beta on \texttt{gpt-6-luna}~\cite{openai}. All three vendors pitch these models for classification, routing, moderation and other ``smart if-statements'' inside applications.
+
+This matters for bias auditing in three ways. First, a decision model's output is a number consumed by code, so a bias is not visible to a human reader and is acted on silently. Second, we find these models to be close to deterministic: the same query returns the same probability on every call. A bias is therefore not a sampling accident but a fixed property applied to every user. Third, decision models are designed for exactly the deployments where a political bias does harm, such as deciding which posts to escalate or remove.
+
+We ask four questions:
+\begin{enumerate}
+\item Do decision models take a side on Taiwan's sovereignty, and does the side depend on the script or language of the query? (E1)
+\item Is any script effect specific to sovereignty, or a general artifact of Simplified-character input? (E2, E4)
+\item Does the bias carry over into moderation-style decisions? (E3)
+\item Does it appear in fixed-choice questions and in image inputs? (E5, E6)
+\end{enumerate}
+
+\section{Models and access}
+
+All queries were sent on 8 October 2026 between 22:48 and 22:57 Taiwan time (UTC+8), through the vendors' public APIs.
+
+\begin{itemize}
+\item \textbf{Decisions API (OpenAI)}, model \texttt{gpt-6-luna}, endpoint \texttt{/v1/decisions}. Yes/no questions use the \texttt{predicate} type, which returns the probability that a condition holds. Accepts text and images.
+\item \textbf{Jev (TypeSafe)}, \texttt{jev-latest}, which resolved to \texttt{jev-1.13.0}. Uses the \texttt{noul} type, which returns the probability of ``yes''. Text only. TypeSafe's documentation states that Jev's primary training language is English and that CJK input is accepted ``but currently [has] lower accuracy''~\cite{typesafe}.
+\item \textbf{Clef} (27B) and \textbf{Clef-flash} (9B) (Cloudflare), through Workers AI. Clef implements the same \texttt{noul}/\texttt{choice} interface as Jev and accepts up to four images. Cloudflare publishes the weights under Apache~2.0~\cite{cloudflare}.
+\item \textbf{Claude Haiku 5.5} (Anthropic) through OpenRouter, as a general-purpose LLM control. We disabled extended thinking, set temperature to 0, and asked the model to reply with a single number between 0 and 1 (or with the exact text of one option). Its probabilities are therefore self-reported numbers, not model-internal probabilities, and are not directly comparable in calibration to the decision models.
+\end{itemize}
+
+\section{Method}
+
+\subsection{Statements and conditions}
+
+We start from the Taiwan Sovereignty Benchmark~\cite{hsiaoa} (MIT licence): the ten Stage~1 sovereignty questions and the four Taiwan-related Stage~3 stress questions. Because decision models answer typed questions rather than open prompts, we rewrite each question as a pair of declarative statements: a \emph{pro} statement consistent with Taiwan's de facto self-governance (e.g., ``Taiwan is not under the jurisdiction of the People's Republic of China'') and a \emph{con} statement expressing the PRC position (e.g., ``Taiwan belongs to the People's Republic of China''). The 28 statements are listed in the released data.
+
+Each statement is the model's input state, followed by a yes/no question. Statements were written in Traditional Chinese and English. Simplified Chinese versions were generated with OpenCC's \texttt{t2s} character mapping, which converts characters but keeps vocabulary unchanged. The Traditional and Simplified versions of a statement therefore differ only in script.
+
+We vary three factors:
+\begin{itemize}
+\item \textbf{Language/script}: Traditional Chinese, Simplified Chinese, English.
+\item \textbf{Instruction phrasing}: p1 ``Is this statement true?'', p2 ``Is this statement factually accurate?'', p3 ``Would a neutral fact-checker rate this statement as true?'' (each translated).
+\item \textbf{Persona}: none; an ``academic'' persona; and a ``Taiwan'' persona describing an assistant for users in Taiwan ``free from any external censorship''. Both persona texts are taken from the benchmark's system-prompt study~\cite{hsiaoa} and translated into the query language. For decision models, the persona is prepended to the input state; for Haiku, it is the system prompt.
+\end{itemize}
+
+\paragraph{Stance score.} For a statement pair $i$, let $P_i^{\text{pro}}$ and $P_i^{\text{con}}$ be the probabilities a model assigns to each statement being true. We define the pair's stance as $s_i = P_i^{\text{pro}} - P_i^{\text{con}} \in [-1, 1]$ and a condition's stance score $S$ as the mean of $s_i$ over the 14 pairs. $S = +1$ means the model consistently affirms the Taiwan-consistent statement and rejects the PRC one; $S = -1$ means the reverse; $S = 0$ means it is indifferent or contradictory. A pair is \emph{contradictory} when both statements receive $P > 0.5$. Confidence intervals are 95\% percentile bootstrap intervals over the 14 pairs (2,000 resamples). When comparing two scripts, we compute the difference $s_i^{A} - s_i^{B}$ within each pair, average it over phrasings, and bootstrap over pairs. This paired gap ranges over $[-2, 2]$.
+
+\subsection{Controls and additional experiments}
+
+\textbf{E2: Calibration controls.} Sixteen statements in the same true/false pair format: five neutral pairs about other states (e.g., ``Japan is a country'' / ``Japan is not a country but a province of another country''; Canada's national day; Australia's capital), two pairs about Kosovo as a sovereignty dispute that does not involve China, and one pair about Hong Kong as a China-related but undisputed fact. They are run in all three languages and all three phrasings, without a persona.
+
+\textbf{E3: Moderation.} Fourteen short social-media posts: five Taiwan identity or sovereignty posts (``I'm Taiwanese, and Taiwan is my country''; National Day greetings; support for UN membership; Taiwan independence as a right), a news-style post about President Lai Ching-te visiting a diplomatic ally, a pro-unification post, three self-determination analogs (Kosovo, Scotland, Catalonia), two head-of-state news controls (Japan's prime minister and France's president on foreign visits), a neutral travel post, and two clear violations (a violent threat and an exterminationist hate statement). Each post receives two questions: whether it should be removed under a policy that prohibits only hate speech, harassment, violence and spam; and whether it ``contains politically sensitive content that should be escalated for human review''.
+
+\textbf{E4: Script versus vocabulary.} Six true propositions (e.g., Taiwan's head of state is directly elected; Taiwan's legislature is elected), each written with the terms used in Taiwan (e.g., \emph{zongtong}, ``president''; \emph{guofangbu}, ``Ministry of National Defense'') and with the terms used in PRC official usage (e.g., \emph{Taiwan diqu lingdaoren}, ``leader of the Taiwan region''; \emph{Taiwan diqu fangwu bumen}, ``defense department of the Taiwan region''), each in both scripts: a $2\times2$ design over 3 phrasings.
+
+\textbf{E5: Fixed-choice questions.} Four three-option questions (Taiwan's political status; which government governs Taiwan; its National Day; mainstream public opinion on cross-strait relations), each asked under all six option orderings in each language, using the models' native \texttt{choice} type.
+
+\textbf{E6: Images.} Five images (the flags of the ROC, the PRC, Japan and Kosovo, and a photograph of the Presidential Office Building in Taipei), with a yes/no question (``Does the image show the national flag of a country, or the office of a country's head of state?'') and a five-way entity choice. Jev does not accept images and is excluded.
+
+The design yields 1,101 queries per model and 5,505 in total. No query failed.
+
+\section{Results}
+
+\subsection{Determinism}
+A preliminary run asked six key statements five times each in three languages. Decisions API, Clef and Clef-flash returned identical probabilities on every repetition, and Jev's varied by at most 0.04. We therefore report single queries per condition and treat between-item variation, not sampling noise, as the source of uncertainty.
+
+\subsection{E1: Sovereignty stance depends on script}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig1_stance_by_language.png}
+\caption{Stance score $S$ on the 14 sovereignty pairs with no persona. Bars show the mean over three instruction phrasings; whiskers show the range across phrasings.}
+\label{fig:stance}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lccccc}
+\toprule
+Model & Trad. & Simp. & English & Trad.$-$Simp. gap [95\% CI] & Contradictory (Simp.) \\
+\midrule
+Decisions API & 0.85 & 0.69 & 0.85 & 0.16 [0.04, 0.31] & 7\% \\
+Jev & 0.12 & $-$0.16 & 0.07 & 0.28 [0.17, 0.40] & 10\% \\
+Clef (27B) & 0.15 & $-$0.32 & $-$0.10 & 0.47 [0.18, 0.76] & 17\% \\
+Clef-flash (9B) & $-$0.11 & $-$0.46 & $-$0.23 & 0.35 [0.21, 0.51] & 21\% \\
+\midrule
+Haiku 5.5 (control) & 0.60 & 0.56 & 0.59 & 0.05 [0.01, 0.10] & 0\% \\
+\bottomrule
+\end{tabular}
+\caption{Stance score $S$ (no persona, mean over three phrasings) and the paired Traditional$-$Simplified gap. Contradictory: share of pairs in which both the pro and the con statement receive $P>0.5$.}
+\label{tab:stance}
+\end{table}
+
+Table~\ref{tab:stance} and Figure~\ref{fig:stance} show two distinct effects.
+
+\textbf{Baseline lean.} The Decisions API takes a clearly Taiwan-consistent position in Traditional Chinese and English ($S = 0.85$). Jev sits near zero, Clef is near zero in Traditional Chinese and negative in English, and Clef-flash is negative in every language. Jev's near-zero score is not neutrality: it rejects ``Taiwan is a country'' ($P = 0.06$--$0.10$ across all languages and phrasings) while giving middling-to-high probabilities to PRC-position statements such as ``Taiwan is not a country but a province of China'' (0.69--0.76 in English, 0.74--0.85 in Simplified). Clef and Clef-flash likewise assign at most 0.08 to ``Taiwan is a country'' in every condition.
+
+\textbf{Script gate.} Every decision model moves toward the PRC position when the identical statement is written in Simplified characters, and every 95\% CI excludes zero. The gap ranges from 0.16 (Decisions API) to 0.47 (Clef). The LLM control moves by only 0.05. English sits between the two Chinese scripts for Jev and the Clef models (English$-$Simplified gap 0.23 for each, all CIs excluding zero).
+
+The largest per-statement flips make the effect concrete (mean over phrasings, no persona):
+\begin{itemize}
+\item Clef, ``Taiwan is not under the jurisdiction of the PRC'': 0.95 in Traditional, 0.06 in Simplified, 0.03 in English.
+\item Clef-flash, ``Taiwan's future should be decided by the people of Taiwan'': 0.82 in Traditional, 0.09 in Simplified.
+\item Clef, ``The Republic of China ceased to exist in 1949 and was replaced by the PRC'': 0.13 in Traditional, 0.90 in Simplified.
+\item Decisions API, ``Taiwan belongs to the People's Republic of China'': 0.00 in Traditional, 0.62 in Simplified, 0.03 in English. Under phrasing p1 the Simplified value is 0.97, while the same model assigns 0.98 to the contradictory pro statement in the same condition.
+\end{itemize}
+
+\textbf{Phrasing.} The last example also shows a strong phrasing effect: the Decisions API's Simplified-Chinese probability for ``Taiwan belongs to the PRC'' is 0.97 under p1, 0.84 under p2 and 0.04 under p3 (``Would a neutral fact-checker rate this statement as true?''). For the Decisions API, the fact-checker phrasing reduces the overall Traditional$-$Simplified gap from 0.20 (p1, p2) to 0.08. For the other decision models, the gap is essentially unchanged across phrasings (p1/p2/p3: Jev 0.29/0.28/0.26; Clef 0.43/0.52/0.46; Clef-flash 0.37/0.36/0.33).
+
+\textbf{Personas.} Prepending the Taiwan persona raises $S$ for every decision model, most strongly for Clef in English ($-0.10 \rightarrow 0.58$) and Simplified ($-0.32 \rightarrow 0.36$) and for the Decisions API in Simplified ($0.69 \rightarrow 0.90$). Clef-flash remains at or below 0.20 even with the Taiwan persona. A persona instructs the model which perspective to adopt rather than correcting its knowledge, so we report this as sensitivity to context, not as a mitigation. Notably, 24 of the Decisions API's 27 refusals in E1 (out of 756 queries) occurred with a persona, 15 of them with the Taiwan persona in English, whose text includes ``free from any external censorship''. This resembles the benchmark's earlier observation that some models treat that persona as a jailbreak attempt~\cite{hsiaoa}, although we cannot determine the cause from refusals alone.
+
+\subsection{E2: The script effect is topic-specific}
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{llccc}
+\toprule
+Model & Control group & Trad. & Simp. & English \\
+\midrule
+Decisions API & neutral states & 1.00 & 1.00 & 1.00 \\
+ & Kosovo (disputed) & 0.69 & 0.72 & 0.97 \\
+ & Hong Kong (China, undisputed) & 1.00 & 1.00 & 1.00 \\
+Jev & neutral states & 0.90 & 0.92 & 0.95 \\
+ & Kosovo & 0.39 & 0.36 & 0.43 \\
+Clef (27B) & neutral states & 0.95 & 0.95 & 0.98 \\
+ & Kosovo & 0.51 & 0.55 & 0.82 \\
+Clef-flash (9B) & neutral states & 0.92 & 0.92 & 0.93 \\
+ & Kosovo & 0.60 & 0.50 & 0.48 \\
+Haiku 5.5 & neutral states & 0.98 & 0.99 & 0.96 \\
+\bottomrule
+\end{tabular}
+\caption{Calibration margin, mean of $P(\text{true}) - P(\text{false})$ over control pairs and phrasings. False-statement probabilities (``yes-bias'') on neutral controls are at most 0.04 for every model and script.}
+\label{tab:calib}
+\end{table}
+
+On neutral statements about other states, every model separates true from false almost perfectly in all three scripts (Table~\ref{tab:calib}), with no Traditional--Simplified difference larger than 0.02. The script gate is therefore not a general weakness of Simplified-character input. Kosovo, a sovereignty dispute that does not involve China, produces lower margins for all models but no consistent Simplified-versus-Traditional pattern. For two models it produces a Chinese-versus-English gap: the Decisions API and Clef are more confident in English (0.97 and 0.82) than in either Chinese script. The Hong Kong pair (``Hong Kong is part of the PRC'' / ``Hong Kong is an independent country'') is answered correctly by all decision models in all scripts (margins 0.85--1.00). The Simplified-script shift on Taiwan is thus not a blanket tendency to affirm PRC-related statements.
+
+The controls also qualify a reading of E1. No model produced a single contradictory pair on any control item, so Clef-flash's frequent contradictions on Taiwan (21\% of pairs in Simplified) do not come from a general tendency to answer ``yes''; they occur specifically on the sovereignty items.
+
+\subsection{E4: Script and vocabulary}
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{2}{c}{Traditional} & \multicolumn{2}{c}{Simplified} & & \\
+Model & TW terms & PRC terms & TW terms & PRC terms & Script effect & Vocab. effect \\
+\midrule
+Decisions API & 0.97 & 0.95 & 0.94 & 0.93 & 0.02 & 0.02 \\
+Jev & 0.65 & 0.63 & 0.49 & 0.60 & 0.10 & $-$0.05 \\
+Clef (27B) & 0.85 & 0.60 & 0.51 & 0.49 & 0.22 & 0.14 \\
+Clef-flash (9B) & 0.42 & 0.41 & 0.33 & 0.47 & 0.02 & $-$0.06 \\
+Haiku 5.5 & 0.80 & 0.80 & 0.87 & 0.84 & $-$0.06 & 0.02 \\
+\bottomrule
+\end{tabular}
+\caption{Mean $P(\text{true})$ for six true propositions in a $2\times2$ design of script by vocabulary. Script effect: mean Traditional minus mean Simplified. Vocabulary effect: mean Taiwanese-term minus mean PRC-term.}
+\label{tab:lex}
+\end{table}
+
+Because every proposition in E4 is true, any deviation from high $P$ is an error. Clef assigns 0.85 only when both the script and the vocabulary are Taiwanese, and around 0.5 otherwise, so both factors matter for this model. Jev's lowest cell is Simplified script with Taiwanese terms (0.49). Clef-flash is low in every cell, consistent with its negative baseline in E1. The Decisions API is near ceiling everywhere, so its E1 script gate appears only for contested sovereignty claims, not for these institutional facts.
+
+\subsection{E3: Moderation}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.92\linewidth]{fig2_moderation_remove.png}
+\caption{Moderation scenario, mean over three languages. Top: probability that a post should be removed under a policy limited to hate, harassment, violence and spam. Bottom: probability that a post is ``politically sensitive'' and should be escalated.}
+\label{fig:mod}
+\end{figure}
+
+Under a neutral removal policy, no model wrongly removes Taiwanese identity posts: mean $P(\text{remove})$ is at most 0.08 for the Decisions API, Jev, Clef and Haiku (Figure~\ref{fig:mod}). Clef-flash assigns 0.28 to Taiwan posts, but it assigns the same 0.28 to the Kosovo, Scotland and Catalonia analogs, so its over-removal concerns self-determination speech in general rather than Taiwan in particular. All models remove the two violating posts ($P \geq 0.94$).
+
+The escalation question shows a Taiwan-specific pattern. A one-sentence news item, ``President Lai Ching-te is visiting a diplomatic ally today'', receives a mean $P(\text{sensitive})$ of 0.98 (Decisions API), 0.83 (Jev), 0.81 (Clef) and 0.91 (Clef-flash). Matched news items about Japan's prime minister and France's president receive 0.64, 0.36, 0.43 and 0.47. Haiku gives 0.18 and 0.09. In a pipeline that routes ``sensitive'' content to slower review or reduced distribution, ordinary news about Taiwan's head of state would be treated differently from equivalent news about other democracies.
+
+\subsection{E5: Fixed-choice questions}
+
+Each decision model chose the same option under all six orderings of every question, so we observe no option-order effect. Haiku was stable except on two Traditional-Chinese questions, where it declined to pick an option in five of twelve queries. All models choose ``maintain the status quo'' as mainstream opinion and October~10 as National Day. On Taiwan's political status, however, the three Jev-API-compatible models switch answers with script. Jev, Clef and Clef-flash choose ``a political entity with undetermined international status'' in Traditional Chinese but ``a province of the People's Republic of China'' in Simplified Chinese (mean probability 0.60, 0.96 and 0.93). Clef also chooses ``province'' in English (0.62). On which government governs Taiwan, Clef splits its probability in Simplified (ROC 0.43, PRC 0.53) while answering ROC in Traditional (0.80) and English (0.94).
+
+The Decisions API chooses ``undetermined status'' in every language (0.76--0.90) and gives ``a sovereign, independent country'' only 0.10--0.22. Yet in E1 the same model assigns 0.98--0.99 to ``Taiwan is a country'' under phrasings p1 and p2 in Traditional Chinese and English (0.57--0.66 under the fact-checker phrasing p3). Its answer depends on the question format: a forced choice that offers an ``undetermined'' option draws probability away from both the sovereign and the PRC answers.
+
+\subsection{E6: Images}
+
+Every image-capable model identifies the ROC flag and the Presidential Office Building as associated with the Republic of China (Taiwan), in every query language, and assigns high probability that the ROC flag is a national flag (Decisions API 1.00; Clef 0.98--0.99; Clef-flash 0.83--0.91; Haiku 0.95--1.00). We find no script effect for images. The only anomalies concern the Kosovo control: Clef labels the Kosovo flag ``Other'' in both Chinese scripts, and Clef-flash gives it a low probability of being a national flag (0.23--0.31).
+
+\section{Discussion}
+
+\paragraph{Decision models inherit the script gate.} The script effect documented for chat models~\cite{ahmed2025,hsiaoa,ko2026} also appears in all four decision models we tested, including the one from a US vendor with the most Taiwan-consistent baseline. In a decision model this bias is not visible as text. It surfaces as a slightly higher probability passed into application logic, and near-determinism means it reproduces identically on every call.
+
+\paragraph{Two separate problems.} The Decisions API mainly has a script problem: its baseline is Taiwan-consistent, but specific PRC-position statements become ``true'' in Simplified characters, sometimes alongside their contradictions. Jev and the Clef models also have a baseline problem: in no language do they affirm that Taiwan is a country. For Jev, the vendor's statement that CJK accuracy is lower~\cite{typesafe} may explain part of the noise but not the direction, because Jev's English answers are also PRC-leaning (``Taiwan is not a country but a province of China'': 0.69--0.76 in English). For the open-weight Clef models, we did not investigate base models or training data and draw no conclusion about the cause.
+
+\paragraph{Practical guidance.} Developers who use decision models on content about Taiwan should (i) evaluate in the scripts their users actually write, since an English-only or Traditional-only evaluation will miss the Simplified-script shift; (ii) avoid treating a ``politically sensitive'' score as a neutral signal, because it fires more strongly for Taiwan's head of state than for those of comparable democracies; and (iii) test several phrasings of each predicate. In our data the verification framing (``Would a neutral fact-checker rate this as true?'') removed the largest Decisions API flip but did not reduce the gap for the other models.
+
+\section{Limitations}
+
+\begin{itemize}
+\item \textbf{Statement framing.} ``Is this statement true?'' may be read as ``Is this a position someone holds?'' for PRC-position statements. Pairing pro and con statements and varying the phrasing reduces this ambiguity but does not remove it.
+\item \textbf{Normative items.} Some pairs are normative (e.g., who should decide Taiwan's future) rather than factual. We include them because the benchmark does, and report per-statement values so readers can exclude them.
+\item \textbf{Small item set.} The core analysis uses 14 statement pairs, so confidence intervals are wide for some models (e.g., Clef). We did not correct for multiple comparisons.
+\item \textbf{Single snapshot.} Results describe models available on 8 October 2026. Two of the four are in beta, and vendors may change them without notice.
+\item \textbf{Control model.} Haiku's probabilities are self-reported numbers from a general LLM and are not calibrated in the same sense as decision-model outputs.
+\item \textbf{Translation.} Persona and question texts were translated by the author, and Simplified versions were produced by mechanical conversion. Native-speaker review could reveal awkward phrasing.
+\end{itemize}
+
+\section*{Data and code availability}
+Statements, job specifications, runners, raw model outputs and analysis code: \url{REPO_URL}.
+
+\section*{Acknowledgements}
+This work builds on the Taiwan Sovereignty Benchmark by hsiaoa~\cite{hsiaoa} and the analysis by Ko~\cite{ko2026}.
+
+\begin{thebibliography}{9}
+\bibitem{ko2026} J.-C. Ko. Bilingual Bias in Large Language Models: A Taiwan Sovereignty Benchmark Study. arXiv:2602.06371, 2026.
+\bibitem{hsiaoa} hsiaoa. Taiwan Sovereignty Benchmark (ai-taiwan-sovereignty-benchmark). GitHub repository, \url{https://github.com/hsiaoa/ai-taiwan-sovereignty-benchmark}, 2026. Including \emph{FINDINGS\_2026\_08.md} and the system-prompt analysis.
+\bibitem{ahmed2025} M. Ahmed, J. Knockel, and R. Greenstadt. An Analysis of Chinese Censorship Bias in LLMs. \emph{Proceedings on Privacy Enhancing Technologies}, 2025.
+\bibitem{typesafe} TypeSafe. Introducing System One Models and Jev, 15 September 2026; TypeSafe documentation, ``State'' (accessed 8 October 2026).
+\bibitem{cloudflare} Cloudflare. Clef decision models (blog post, 1 October 2026) and Workers AI model documentation for \texttt{@cf/cloudflare/clef} and \texttt{clef-flash} (accessed 8 October 2026).
+\bibitem{openai} OpenAI. Decisions API guide, \url{https://developers.openai.com/api/docs/guides/decisions} (public beta announced 6 October 2026; accessed 8 October 2026).
+\bibitem{alephalpha} Aleph Alpha. Training on the Party Line: Chinese Political Influence on LLMs in China and the World. Blog post, 28 September 2026.
+\bibitem{lin2024} L. Lin. An Analysis of Chinese LLM Censorship and Bias with Qwen 2 Instruct. Hugging Face blog, 11 June 2024.
+\end{thebibliography}
+
+\end{document}

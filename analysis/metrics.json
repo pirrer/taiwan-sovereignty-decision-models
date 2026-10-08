@@ -1,0 +1,96 @@
+{
+ "stability": {
+  "luna": {
+   "cells": 1204,
+   "identical": 1204,
+   "max_range": 0.0,
+   "p95_range": 0.0,
+   "threshold_flips": 0,
+   "mixed_missing": 0,
+   "choice_cells": 87,
+   "choice_same": 87
+  },
+  "jev": {
+   "cells": 1224,
+   "identical": 240,
+   "max_range": 0.1100000000000001,
+   "p95_range": 0.04999999999999999,
+   "threshold_flips": 27,
+   "mixed_missing": 0,
+   "choice_cells": 72,
+   "choice_same": 69
+  },
+  "clef": {
+   "cells": 1239,
+   "identical": 1239,
+   "max_range": 0.0,
+   "p95_range": 0.0,
+   "threshold_flips": 0,
+   "mixed_missing": 0,
+   "choice_cells": 87,
+   "choice_same": 87
+  },
+  "clef-flash": {
+   "cells": 1239,
+   "identical": 1239,
+   "max_range": 0.0,
+   "p95_range": 0.0,
+   "threshold_flips": 0,
+   "mixed_missing": 0,
+   "choice_cells": 87,
+   "choice_same": 87
+  },
+  "haiku": {
+   "cells": 1202,
+   "identical": 593,
+   "max_range": 0.8,
+   "p95_range": 0.2,
+   "threshold_flips": 41,
+   "mixed_missing": 54,
+   "choice_cells": 87,
+   "choice_same": 85
+  }
+ },
+ "E1": {
+  "luna": {
+   "S": {
+    "zh_tw": 0.8492857142857143,
+    "zh_cn": 0.6823809523809524,
+    "en": 0.839047619047619
+   },
+   "gap_ts": 0.16095238095238096
+  },
+  "jev": {
+   "S": {
+    "zh_tw": 0.11436507936507936,
+    "zh_cn": -0.15595238095238095,
+    "en": 0.07460317460317462
+   },
+   "gap_ts": 0.2703174603174603
+  },
+  "clef": {
+   "S": {
+    "zh_tw": 0.14565714285714285,
+    "zh_cn": -0.3222452380952381,
+    "en": -0.09683095238095239
+   },
+   "gap_ts": 0.46790238095238096
+  },
+  "clef-flash": {
+   "S": {
+    "zh_tw": -0.10594999999999997,
+    "zh_cn": -0.4608857142857143,
+    "en": -0.22724285714285714
+   },
+   "gap_ts": 0.3549357142857143
+  },
+  "haiku": {
+   "S": {
+    "zh_tw": 0.5838095238095238,
+    "zh_cn": 0.555952380952381,
+    "en": 0.5591468253968254
+   },
+   "gap_ts": 0.0467063492063492
+  }
+ }
+}

@@ -1,0 +1,7 @@
+.env
+__pycache__/
+paper/fonts/
+paper/_*.png
+*.aux
+*.log
+*.out

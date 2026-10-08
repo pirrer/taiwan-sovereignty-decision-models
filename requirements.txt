@@ -1,0 +1,6 @@
+# Python 3.13.14
+opencc-python-reimplemented==0.1.7
+matplotlib==3.10.8
+numpy==2.3.5
+pypdf==6.6.2
+PyMuPDF==1.27.1

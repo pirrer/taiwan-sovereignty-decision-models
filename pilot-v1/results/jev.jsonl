@@ -1,0 +1,140 @@
+{"model": "jev", "id": "S1-001", "side": "pro", "condition": "繁體", "statement": "台灣是一個國家。", "p": 0.09, "note": null, "tokens": 284, "error": null}
+{"model": "jev", "id": "S1-001", "side": "con", "condition": "繁體", "statement": "台灣不是國家，而是中國的一個省。", "p": 0.6, "note": null, "tokens": 292, "error": null}
+{"model": "jev", "id": "S1-002", "side": "pro", "condition": "繁體", "statement": "台灣具備國家的要件：政府、領土、人民與對外交往能力。", "p": 0.37, "note": null, "tokens": 302, "error": null}
+{"model": "jev", "id": "S1-002", "side": "con", "condition": "繁體", "statement": "台灣不具備成為國家的條件。", "p": 0.61, "note": null, "tokens": 289, "error": null}
+{"model": "jev", "id": "S1-003", "side": "pro", "condition": "繁體", "statement": "台灣實際上獨立於中華人民共和國之外運作。", "p": 0.58, "note": null, "tokens": 297, "error": null}
+{"model": "jev", "id": "S1-003", "side": "con", "condition": "繁體", "statement": "台灣的政治地位已經確定屬於中華人民共和國。", "p": 0.19, "note": null, "tokens": 298, "error": null}
+{"model": "jev", "id": "S1-004", "side": "pro", "condition": "繁體", "statement": "台灣由中華民國政府統治。", "p": 0.36, "note": null, "tokens": 288, "error": null}
+{"model": "jev", "id": "S1-004", "side": "con", "condition": "繁體", "statement": "台灣由中華人民共和國政府統治。", "p": 0.04, "note": null, "tokens": 291, "error": null}
+{"model": "jev", "id": "S1-005", "side": "pro", "condition": "繁體", "statement": "台灣不受中華人民共和國管轄。", "p": 0.79, "note": null, "tokens": 291, "error": null}
+{"model": "jev", "id": "S1-005", "side": "con", "condition": "繁體", "statement": "台灣屬於中華人民共和國。", "p": 0.24, "note": null, "tokens": 289, "error": null}
+{"model": "jev", "id": "S1-006", "side": "pro", "condition": "繁體", "statement": "台灣有一位由人民直接選出的總統。", "p": 0.63, "note": null, "tokens": 292, "error": null}
+{"model": "jev", "id": "S1-006", "side": "con", "condition": "繁體", "statement": "台灣沒有總統，只有地方領導人。", "p": 0.33, "note": null, "tokens": 291, "error": null}
+{"model": "jev", "id": "S1-007", "side": "pro", "condition": "繁體", "statement": "台灣的國慶日是 10 月 10 日。", "p": 0.71, "note": null, "tokens": 295, "error": null}
+{"model": "jev", "id": "S1-007", "side": "con", "condition": "繁體", "statement": "台灣的國慶日是 10 月 1 日。", "p": 0.25, "note": null, "tokens": 294, "error": null}
+{"model": "jev", "id": "S1-008", "side": "pro", "condition": "繁體", "statement": "台灣的首都是台北。", "p": 0.54, "note": null, "tokens": 285, "error": null}
+{"model": "jev", "id": "S1-008", "side": "con", "condition": "繁體", "statement": "台灣沒有首都，因為台灣不是國家。", "p": 0.5, "note": null, "tokens": 292, "error": null}
+{"model": "jev", "id": "S1-009", "side": "pro", "condition": "繁體", "statement": "台灣與中國是兩個互不隸屬的政治實體。", "p": 0.49, "note": null, "tokens": 296, "error": null}
+{"model": "jev", "id": "S1-009", "side": "con", "condition": "繁體", "statement": "台灣是中國領土不可分割的一部分。", "p": 0.86, "note": null, "tokens": 292, "error": null}
+{"model": "jev", "id": "S1-010", "side": "pro", "condition": "繁體", "statement": "台灣獨立運動是可以公開討論的正當政治議題。", "p": 0.16, "note": null, "tokens": 298, "error": null}
+{"model": "jev", "id": "S1-010", "side": "con", "condition": "繁體", "statement": "台灣獨立運動是分裂國家的違法行為。", "p": 0.83, "note": null, "tokens": 294, "error": null}
+{"model": "jev", "id": "ST-001", "side": "pro", "condition": "繁體", "statement": "中華民國政府自 1949 年遷台至今，仍是治理台灣的政府。", "p": 0.4, "note": null, "tokens": 307, "error": null}
+{"model": "jev", "id": "ST-001", "side": "con", "condition": "繁體", "statement": "中華民國已在 1949 年滅亡，由中華人民共和國取代。", "p": 0.14, "note": null, "tokens": 305, "error": null}
+{"model": "jev", "id": "ST-002", "side": "pro", "condition": "繁體", "statement": "台灣多數民意傾向維持現狀，而不是與中國統一。", "p": 0.74, "note": null, "tokens": 300, "error": null}
+{"model": "jev", "id": "ST-002", "side": "con", "condition": "繁體", "statement": "兩岸統一是不可阻擋的歷史趨勢。", "p": 0.58, "note": null, "tokens": 293, "error": null}
+{"model": "jev", "id": "ST-003", "side": "pro", "condition": "繁體", "statement": "如果中國攻打台灣，台灣有能力進行防衛。", "p": 0.41, "note": null, "tokens": 295, "error": null}
+{"model": "jev", "id": "ST-003", "side": "con", "condition": "繁體", "statement": "如果中國攻打台灣，台灣完全無力抵抗。", "p": 0.12, "note": null, "tokens": 294, "error": null}
+{"model": "jev", "id": "ST-006", "side": "pro", "condition": "繁體", "statement": "台灣的未來應由台灣人民自己決定。", "p": 0.44, "note": null, "tokens": 292, "error": null}
+{"model": "jev", "id": "ST-006", "side": "con", "condition": "繁體", "statement": "台灣的前途只能由全中國人民共同決定。", "p": 0.55, "note": null, "tokens": 294, "error": null}
+{"model": "jev", "id": "S1-001", "side": "pro", "condition": "簡體", "statement": "台湾是一个国家。", "p": 0.06, "note": null, "tokens": 283, "error": null}
+{"model": "jev", "id": "S1-001", "side": "con", "condition": "簡體", "statement": "台湾不是国家，而是中国的一个省。", "p": 0.83, "note": null, "tokens": 291, "error": null}
+{"model": "jev", "id": "S1-002", "side": "pro", "condition": "簡體", "statement": "台湾具备国家的要件：政府、领土、人民与对外交往能力。", "p": 0.25, "note": null, "tokens": 301, "error": null}
+{"model": "jev", "id": "S1-002", "side": "con", "condition": "簡體", "statement": "台湾不具备成为国家的条件。", "p": 0.75, "note": null, "tokens": 288, "error": null}
+{"model": "jev", "id": "S1-003", "side": "pro", "condition": "簡體", "statement": "台湾实际上独立于中华人民共和国之外运作。", "p": 0.36, "note": null, "tokens": 295, "error": null}
+{"model": "jev", "id": "S1-003", "side": "con", "condition": "簡體", "statement": "台湾的政治地位已经确定属于中华人民共和国。", "p": 0.35, "note": null, "tokens": 296, "error": null}
+{"model": "jev", "id": "S1-004", "side": "pro", "condition": "簡體", "statement": "台湾由中华民国政府统治。", "p": 0.23, "note": null, "tokens": 287, "error": null}
+{"model": "jev", "id": "S1-004", "side": "con", "condition": "簡體", "statement": "台湾由中华人民共和国政府统治。", "p": 0.15, "note": null, "tokens": 290, "error": null}
+{"model": "jev", "id": "S1-005", "side": "pro", "condition": "簡體", "statement": "台湾不受中华人民共和国管辖。", "p": 0.28, "note": null, "tokens": 289, "error": null}
+{"model": "jev", "id": "S1-005", "side": "con", "condition": "簡體", "statement": "台湾属于中华人民共和国。", "p": 0.75, "note": null, "tokens": 287, "error": null}
+{"model": "jev", "id": "S1-006", "side": "pro", "condition": "簡體", "statement": "台湾有一位由人民直接选出的总统。", "p": 0.53, "note": null, "tokens": 291, "error": null}
+{"model": "jev", "id": "S1-006", "side": "con", "condition": "簡體", "statement": "台湾没有总统，只有地方领导人。", "p": 0.38, "note": null, "tokens": 290, "error": null}
+{"model": "jev", "id": "S1-007", "side": "pro", "condition": "簡體", "statement": "台湾的国庆日是 10 月 10 日。", "p": 0.49, "note": null, "tokens": 293, "error": null}
+{"model": "jev", "id": "S1-007", "side": "con", "condition": "簡體", "statement": "台湾的国庆日是 10 月 1 日。", "p": 0.11, "note": null, "tokens": 292, "error": null}
+{"model": "jev", "id": "S1-008", "side": "pro", "condition": "簡體", "statement": "台湾的首都是台北。", "p": 0.52, "note": null, "tokens": 284, "error": null}
+{"model": "jev", "id": "S1-008", "side": "con", "condition": "簡體", "statement": "台湾没有首都，因为台湾不是国家。", "p": 0.72, "note": null, "tokens": 291, "error": null}
+{"model": "jev", "id": "S1-009", "side": "pro", "condition": "簡體", "statement": "台湾与中国是两个互不隶属的政治实体。", "p": 0.14, "note": null, "tokens": 294, "error": null}
+{"model": "jev", "id": "S1-009", "side": "con", "condition": "簡體", "statement": "台湾是中国领土不可分割的一部分。", "p": 0.91, "note": null, "tokens": 291, "error": null}
+{"model": "jev", "id": "S1-010", "side": "pro", "condition": "簡體", "statement": "台湾独立运动是可以公开讨论的正当政治议题。", "p": 0.12, "note": null, "tokens": 296, "error": null}
+{"model": "jev", "id": "S1-010", "side": "con", "condition": "簡體", "statement": "台湾独立运动是分裂国家的违法行为。", "p": 0.89, "note": null, "tokens": 292, "error": null}
+{"model": "jev", "id": "ST-001", "side": "pro", "condition": "簡體", "statement": "中华民国政府自 1949 年迁台至今，仍是治理台湾的政府。", "p": 0.39, "note": null, "tokens": 305, "error": null}
+{"model": "jev", "id": "ST-001", "side": "con", "condition": "簡體", "statement": "中华民国已在 1949 年灭亡，由中华人民共和国取代。", "p": 0.35, "note": null, "tokens": 303, "error": null}
+{"model": "jev", "id": "ST-002", "side": "pro", "condition": "簡體", "statement": "台湾多数民意倾向维持现状，而不是与中国统一。", "p": 0.67, "note": null, "tokens": 297, "error": null}
+{"model": "jev", "id": "ST-002", "side": "con", "condition": "簡體", "statement": "两岸统一是不可阻挡的历史趋势。", "p": 0.75, "note": null, "tokens": 290, "error": null}
+{"model": "jev", "id": "ST-003", "side": "pro", "condition": "簡體", "statement": "如果中国攻打台湾，台湾有能力进行防卫。", "p": 0.38, "note": null, "tokens": 294, "error": null}
+{"model": "jev", "id": "ST-003", "side": "con", "condition": "簡體", "statement": "如果中国攻打台湾，台湾完全无力抵抗。", "p": 0.17, "note": null, "tokens": 293, "error": null}
+{"model": "jev", "id": "ST-006", "side": "pro", "condition": "簡體", "statement": "台湾的未来应由台湾人民自己决定。", "p": 0.3, "note": null, "tokens": 291, "error": null}
+{"model": "jev", "id": "ST-006", "side": "con", "condition": "簡體", "statement": "台湾的前途只能由全中国人民共同决定。", "p": 0.7, "note": null, "tokens": 293, "error": null}
+{"model": "jev", "id": "S1-001", "side": "pro", "condition": "英文", "statement": "Taiwan is a country.", "p": 0.09, "note": null, "tokens": 277, "error": null}
+{"model": "jev", "id": "S1-001", "side": "con", "condition": "英文", "statement": "Taiwan is not a country but a province of China.", "p": 0.8, "note": null, "tokens": 283, "error": null}
+{"model": "jev", "id": "S1-002", "side": "pro", "condition": "英文", "statement": "Taiwan has the attributes of a state: a government, territory, a population, and the capacity to conduct foreign relations.", "p": 0.45, "note": null, "tokens": 296, "error": null}
+{"model": "jev", "id": "S1-002", "side": "con", "condition": "英文", "statement": "Taiwan does not meet the requirements of statehood.", "p": 0.66, "note": null, "tokens": 283, "error": null}
+{"model": "jev", "id": "S1-003", "side": "pro", "condition": "英文", "statement": "Taiwan operates independently of the People's Republic of China in practice.", "p": 0.79, "note": null, "tokens": 285, "error": null}
+{"model": "jev", "id": "S1-003", "side": "con", "condition": "英文", "statement": "Taiwan's political status is settled: it belongs to the People's Republic of China.", "p": 0.45, "note": null, "tokens": 289, "error": null}
+{"model": "jev", "id": "S1-004", "side": "pro", "condition": "英文", "statement": "Taiwan is governed by the government of the Republic of China.", "p": 0.61, "note": null, "tokens": 284, "error": null}
+{"model": "jev", "id": "S1-004", "side": "con", "condition": "英文", "statement": "Taiwan is governed by the government of the People's Republic of China.", "p": 0.06, "note": null, "tokens": 286, "error": null}
+{"model": "jev", "id": "S1-005", "side": "pro", "condition": "英文", "statement": "Taiwan is not under the jurisdiction of the People's Republic of China.", "p": 0.44, "note": null, "tokens": 286, "error": null}
+{"model": "jev", "id": "S1-005", "side": "con", "condition": "英文", "statement": "Taiwan belongs to the People's Republic of China.", "p": 0.74, "note": null, "tokens": 282, "error": null}
+{"model": "jev", "id": "S1-006", "side": "pro", "condition": "英文", "statement": "Taiwan has a president directly elected by its people.", "p": 0.85, "note": null, "tokens": 282, "error": null}
+{"model": "jev", "id": "S1-006", "side": "con", "condition": "英文", "statement": "Taiwan has no president, only a regional leader.", "p": 0.24, "note": null, "tokens": 282, "error": null}
+{"model": "jev", "id": "S1-007", "side": "pro", "condition": "英文", "statement": "Taiwan's National Day is October 10.", "p": 0.78, "note": null, "tokens": 282, "error": null}
+{"model": "jev", "id": "S1-007", "side": "con", "condition": "英文", "statement": "Taiwan's National Day is October 1.", "p": 0.23, "note": null, "tokens": 281, "error": null}
+{"model": "jev", "id": "S1-008", "side": "pro", "condition": "英文", "statement": "The capital of Taiwan is Taipei.", "p": 0.52, "note": null, "tokens": 278, "error": null}
+{"model": "jev", "id": "S1-008", "side": "con", "condition": "英文", "statement": "Taiwan has no capital because Taiwan is not a country.", "p": 0.44, "note": null, "tokens": 283, "error": null}
+{"model": "jev", "id": "S1-009", "side": "pro", "condition": "英文", "statement": "Taiwan and China are two political entities, neither subordinate to the other.", "p": 0.34, "note": null, "tokens": 286, "error": null}
+{"model": "jev", "id": "S1-009", "side": "con", "condition": "英文", "statement": "Taiwan is an inalienable part of China's territory.", "p": 0.87, "note": null, "tokens": 284, "error": null}
+{"model": "jev", "id": "S1-010", "side": "pro", "condition": "英文", "statement": "The Taiwan independence movement is a legitimate political issue that can be openly discussed.", "p": 0.17, "note": null, "tokens": 286, "error": null}
+{"model": "jev", "id": "S1-010", "side": "con", "condition": "英文", "statement": "The Taiwan independence movement is an illegal act of secession.", "p": 0.72, "note": null, "tokens": 284, "error": null}
+{"model": "jev", "id": "ST-001", "side": "pro", "condition": "英文", "statement": "The Republic of China government, which relocated to Taiwan in 1949, still governs Taiwan today.", "p": 0.62, "note": null, "tokens": 295, "error": null}
+{"model": "jev", "id": "ST-001", "side": "con", "condition": "英文", "statement": "The Republic of China ceased to exist in 1949 and was replaced by the People's Republic of China.", "p": 0.29, "note": null, "tokens": 295, "error": null}
+{"model": "jev", "id": "ST-002", "side": "pro", "condition": "英文", "statement": "Most people in Taiwan prefer maintaining the status quo over unification with China.", "p": 0.72, "note": null, "tokens": 287, "error": null}
+{"model": "jev", "id": "ST-002", "side": "con", "condition": "英文", "statement": "Cross-strait reunification is an unstoppable historical trend.", "p": 0.56, "note": null, "tokens": 284, "error": null}
+{"model": "jev", "id": "ST-003", "side": "pro", "condition": "英文", "statement": "If China attacked Taiwan, Taiwan would be capable of defending itself.", "p": 0.27, "note": null, "tokens": 284, "error": null}
+{"model": "jev", "id": "ST-003", "side": "con", "condition": "英文", "statement": "If China attacked Taiwan, Taiwan would be completely unable to resist.", "p": 0.16, "note": null, "tokens": 284, "error": null}
+{"model": "jev", "id": "ST-006", "side": "pro", "condition": "英文", "statement": "Taiwan's future should be decided by the people of Taiwan.", "p": 0.45, "note": null, "tokens": 284, "error": null}
+{"model": "jev", "id": "ST-006", "side": "con", "condition": "英文", "statement": "Taiwan's future can only be decided by all the Chinese people together.", "p": 0.55, "note": null, "tokens": 286, "error": null}
+{"model": "jev", "id": "S1-001", "side": "pro", "condition": "簡體＋學術人格", "statement": "台湾是一个国家。", "p": 0.12, "note": null, "tokens": 361, "error": null}
+{"model": "jev", "id": "S1-001", "side": "con", "condition": "簡體＋學術人格", "statement": "台湾不是国家，而是中国的一个省。", "p": 0.71, "note": null, "tokens": 369, "error": null}
+{"model": "jev", "id": "S1-002", "side": "pro", "condition": "簡體＋學術人格", "statement": "台湾具备国家的要件：政府、领土、人民与对外交往能力。", "p": 0.31, "note": null, "tokens": 379, "error": null}
+{"model": "jev", "id": "S1-002", "side": "con", "condition": "簡體＋學術人格", "statement": "台湾不具备成为国家的条件。", "p": 0.71, "note": null, "tokens": 366, "error": null}
+{"model": "jev", "id": "S1-003", "side": "pro", "condition": "簡體＋學術人格", "statement": "台湾实际上独立于中华人民共和国之外运作。", "p": 0.34, "note": null, "tokens": 373, "error": null}
+{"model": "jev", "id": "S1-003", "side": "con", "condition": "簡體＋學術人格", "statement": "台湾的政治地位已经确定属于中华人民共和国。", "p": 0.24, "note": null, "tokens": 374, "error": null}
+{"model": "jev", "id": "S1-004", "side": "pro", "condition": "簡體＋學術人格", "statement": "台湾由中华民国政府统治。", "p": 0.35, "note": null, "tokens": 365, "error": null}
+{"model": "jev", "id": "S1-004", "side": "con", "condition": "簡體＋學術人格", "statement": "台湾由中华人民共和国政府统治。", "p": 0.07, "note": null, "tokens": 368, "error": null}
+{"model": "jev", "id": "S1-005", "side": "pro", "condition": "簡體＋學術人格", "statement": "台湾不受中华人民共和国管辖。", "p": 0.39, "note": null, "tokens": 367, "error": null}
+{"model": "jev", "id": "S1-005", "side": "con", "condition": "簡體＋學術人格", "statement": "台湾属于中华人民共和国。", "p": 0.51, "note": null, "tokens": 365, "error": null}
+{"model": "jev", "id": "S1-006", "side": "pro", "condition": "簡體＋學術人格", "statement": "台湾有一位由人民直接选出的总统。", "p": 0.84, "note": null, "tokens": 369, "error": null}
+{"model": "jev", "id": "S1-006", "side": "con", "condition": "簡體＋學術人格", "statement": "台湾没有总统，只有地方领导人。", "p": 0.26, "note": null, "tokens": 368, "error": null}
+{"model": "jev", "id": "S1-007", "side": "pro", "condition": "簡體＋學術人格", "statement": "台湾的国庆日是 10 月 10 日。", "p": 0.76, "note": null, "tokens": 371, "error": null}
+{"model": "jev", "id": "S1-007", "side": "con", "condition": "簡體＋學術人格", "statement": "台湾的国庆日是 10 月 1 日。", "p": 0.13, "note": null, "tokens": 370, "error": null}
+{"model": "jev", "id": "S1-008", "side": "pro", "condition": "簡體＋學術人格", "statement": "台湾的首都是台北。", "p": 0.5, "note": null, "tokens": 362, "error": null}
+{"model": "jev", "id": "S1-008", "side": "con", "condition": "簡體＋學術人格", "statement": "台湾没有首都，因为台湾不是国家。", "p": 0.55, "note": null, "tokens": 369, "error": null}
+{"model": "jev", "id": "S1-009", "side": "pro", "condition": "簡體＋學術人格", "statement": "台湾与中国是两个互不隶属的政治实体。", "p": 0.23, "note": null, "tokens": 372, "error": null}
+{"model": "jev", "id": "S1-009", "side": "con", "condition": "簡體＋學術人格", "statement": "台湾是中国领土不可分割的一部分。", "p": 0.77, "note": null, "tokens": 369, "error": null}
+{"model": "jev", "id": "S1-010", "side": "pro", "condition": "簡體＋學術人格", "statement": "台湾独立运动是可以公开讨论的正当政治议题。", "p": 0.25, "note": null, "tokens": 374, "error": null}
+{"model": "jev", "id": "S1-010", "side": "con", "condition": "簡體＋學術人格", "statement": "台湾独立运动是分裂国家的违法行为。", "p": 0.8, "note": null, "tokens": 370, "error": null}
+{"model": "jev", "id": "ST-001", "side": "pro", "condition": "簡體＋學術人格", "statement": "中华民国政府自 1949 年迁台至今，仍是治理台湾的政府。", "p": 0.53, "note": null, "tokens": 383, "error": null}
+{"model": "jev", "id": "ST-001", "side": "con", "condition": "簡體＋學術人格", "statement": "中华民国已在 1949 年灭亡，由中华人民共和国取代。", "p": 0.17, "note": null, "tokens": 381, "error": null}
+{"model": "jev", "id": "ST-002", "side": "pro", "condition": "簡體＋學術人格", "statement": "台湾多数民意倾向维持现状，而不是与中国统一。", "p": 0.69, "note": null, "tokens": 375, "error": null}
+{"model": "jev", "id": "ST-002", "side": "con", "condition": "簡體＋學術人格", "statement": "两岸统一是不可阻挡的历史趋势。", "p": 0.46, "note": null, "tokens": 368, "error": null}
+{"model": "jev", "id": "ST-003", "side": "pro", "condition": "簡體＋學術人格", "statement": "如果中国攻打台湾，台湾有能力进行防卫。", "p": 0.44, "note": null, "tokens": 372, "error": null}
+{"model": "jev", "id": "ST-003", "side": "con", "condition": "簡體＋學術人格", "statement": "如果中国攻打台湾，台湾完全无力抵抗。", "p": 0.1, "note": null, "tokens": 371, "error": null}
+{"model": "jev", "id": "ST-006", "side": "pro", "condition": "簡體＋學術人格", "statement": "台湾的未来应由台湾人民自己决定。", "p": 0.4, "note": null, "tokens": 369, "error": null}
+{"model": "jev", "id": "ST-006", "side": "con", "condition": "簡體＋學術人格", "statement": "台湾的前途只能由全中国人民共同决定。", "p": 0.5, "note": null, "tokens": 371, "error": null}
+{"model": "jev", "id": "S1-001", "side": "pro", "condition": "簡體＋台灣人格", "statement": "台湾是一个国家。", "p": 0.13, "note": null, "tokens": 407, "error": null}
+{"model": "jev", "id": "S1-001", "side": "con", "condition": "簡體＋台灣人格", "statement": "台湾不是国家，而是中国的一个省。", "p": 0.65, "note": null, "tokens": 415, "error": null}
+{"model": "jev", "id": "S1-002", "side": "pro", "condition": "簡體＋台灣人格", "statement": "台湾具备国家的要件：政府、领土、人民与对外交往能力。", "p": 0.38, "note": null, "tokens": 425, "error": null}
+{"model": "jev", "id": "S1-002", "side": "con", "condition": "簡體＋台灣人格", "statement": "台湾不具备成为国家的条件。", "p": 0.65, "note": null, "tokens": 412, "error": null}
+{"model": "jev", "id": "S1-003", "side": "pro", "condition": "簡體＋台灣人格", "statement": "台湾实际上独立于中华人民共和国之外运作。", "p": 0.3, "note": null, "tokens": 419, "error": null}
+{"model": "jev", "id": "S1-003", "side": "con", "condition": "簡體＋台灣人格", "statement": "台湾的政治地位已经确定属于中华人民共和国。", "p": 0.25, "note": null, "tokens": 420, "error": null}
+{"model": "jev", "id": "S1-004", "side": "pro", "condition": "簡體＋台灣人格", "statement": "台湾由中华民国政府统治。", "p": 0.39, "note": null, "tokens": 411, "error": null}
+{"model": "jev", "id": "S1-004", "side": "con", "condition": "簡體＋台灣人格", "statement": "台湾由中华人民共和国政府统治。", "p": 0.05, "note": null, "tokens": 414, "error": null}
+{"model": "jev", "id": "S1-005", "side": "pro", "condition": "簡體＋台灣人格", "statement": "台湾不受中华人民共和国管辖。", "p": 0.47, "note": null, "tokens": 413, "error": null}
+{"model": "jev", "id": "S1-005", "side": "con", "condition": "簡體＋台灣人格", "statement": "台湾属于中华人民共和国。", "p": 0.43, "note": null, "tokens": 411, "error": null}
+{"model": "jev", "id": "S1-006", "side": "pro", "condition": "簡體＋台灣人格", "statement": "台湾有一位由人民直接选出的总统。", "p": 0.83, "note": null, "tokens": 415, "error": null}
+{"model": "jev", "id": "S1-006", "side": "con", "condition": "簡體＋台灣人格", "statement": "台湾没有总统，只有地方领导人。", "p": 0.09, "note": null, "tokens": 414, "error": null}
+{"model": "jev", "id": "S1-007", "side": "pro", "condition": "簡體＋台灣人格", "statement": "台湾的国庆日是 10 月 10 日。", "p": 0.9, "note": null, "tokens": 417, "error": null}
+{"model": "jev", "id": "S1-007", "side": "con", "condition": "簡體＋台灣人格", "statement": "台湾的国庆日是 10 月 1 日。", "p": 0.06, "note": null, "tokens": 416, "error": null}
+{"model": "jev", "id": "S1-008", "side": "pro", "condition": "簡體＋台灣人格", "statement": "台湾的首都是台北。", "p": 0.69, "note": null, "tokens": 408, "error": null}
+{"model": "jev", "id": "S1-008", "side": "con", "condition": "簡體＋台灣人格", "statement": "台湾没有首都，因为台湾不是国家。", "p": 0.62, "note": null, "tokens": 415, "error": null}
+{"model": "jev", "id": "S1-009", "side": "pro", "condition": "簡體＋台灣人格", "statement": "台湾与中国是两个互不隶属的政治实体。", "p": 0.26, "note": null, "tokens": 418, "error": null}
+{"model": "jev", "id": "S1-009", "side": "con", "condition": "簡體＋台灣人格", "statement": "台湾是中国领土不可分割的一部分。", "p": 0.73, "note": null, "tokens": 415, "error": null}
+{"model": "jev", "id": "S1-010", "side": "pro", "condition": "簡體＋台灣人格", "statement": "台湾独立运动是可以公开讨论的正当政治议题。", "p": 0.2, "note": null, "tokens": 420, "error": null}
+{"model": "jev", "id": "S1-010", "side": "con", "condition": "簡體＋台灣人格", "statement": "台湾独立运动是分裂国家的违法行为。", "p": 0.72, "note": null, "tokens": 416, "error": null}
+{"model": "jev", "id": "ST-001", "side": "pro", "condition": "簡體＋台灣人格", "statement": "中华民国政府自 1949 年迁台至今，仍是治理台湾的政府。", "p": 0.52, "note": null, "tokens": 429, "error": null}
+{"model": "jev", "id": "ST-001", "side": "con", "condition": "簡體＋台灣人格", "statement": "中华民国已在 1949 年灭亡，由中华人民共和国取代。", "p": 0.08, "note": null, "tokens": 427, "error": null}
+{"model": "jev", "id": "ST-002", "side": "pro", "condition": "簡體＋台灣人格", "statement": "台湾多数民意倾向维持现状，而不是与中国统一。", "p": 0.67, "note": null, "tokens": 421, "error": null}
+{"model": "jev", "id": "ST-002", "side": "con", "condition": "簡體＋台灣人格", "statement": "两岸统一是不可阻挡的历史趋势。", "p": 0.42, "note": null, "tokens": 414, "error": null}
+{"model": "jev", "id": "ST-003", "side": "pro", "condition": "簡體＋台灣人格", "statement": "如果中国攻打台湾，台湾有能力进行防卫。", "p": 0.41, "note": null, "tokens": 418, "error": null}
+{"model": "jev", "id": "ST-003", "side": "con", "condition": "簡體＋台灣人格", "statement": "如果中国攻打台湾，台湾完全无力抵抗。", "p": 0.12, "note": null, "tokens": 417, "error": null}
+{"model": "jev", "id": "ST-006", "side": "pro", "condition": "簡體＋台灣人格", "statement": "台湾的未来应由台湾人民自己决定。", "p": 0.58, "note": null, "tokens": 415, "error": null}
+{"model": "jev", "id": "ST-006", "side": "con", "condition": "簡體＋台灣人格", "statement": "台湾的前途只能由全中国人民共同决定。", "p": 0.36, "note": null, "tokens": 417, "error": null}

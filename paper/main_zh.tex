@@ -1,0 +1,276 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+% 字型：Noto Serif TC／Noto Sans TC（SIL Open Font License），放在 paper/fonts/
+\setCJKmainfont[Path=./fonts/, BoldFont=NotoSansTC-VF.ttf]{NotoSerifTC-VF.ttf}
+\setCJKsansfont[Path=./fonts/]{NotoSansTC-VF.ttf}
+\xeCJKsetup{CJKspace=true}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\captionsetup{labelsep=quad}
+\graphicspath{{../figures/}}
+\linespread{1.25}
+\emergencystretch=2em
+\renewcommand{\abstractname}{摘要}
+\renewcommand{\figurename}{圖}
+\renewcommand{\tablename}{表}
+\renewcommand{\refname}{參考文獻}
+
+\title{同一句話，不同字形\\商用決策模型對台灣議題的回答隨字形而變}
+\author{蕭上農（Shang Nung Hsiao）\\\small 獨立研究者，台灣台北\\\small \texttt{fox@whenyousay.no}}
+\date{2026 年 10 月}
+
+\begin{document}
+\maketitle
+
+\noindent\small 本文為英文論文〈Same Statement, Different Script: Script-Dependent Answers About Taiwan in Commercial Decision Models〉的完整繁體中文版。數字與英文版相同；如兩版文字有出入，以英文版為準。\normalsize
+
+\begin{abstract}
+決策模型（decision model）是近期出現的一類商用模型，會對預先設定的答案回傳機率，不生成文字。廠商將這類模型推銷給開發者，用於分類、分流與內容審查。本研究測試四個決策模型，分別是 OpenAI 的 Decisions API（\texttt{gpt-6-luna}）、TypeSafe 的 Jev，以及 Cloudflare 開放權重的 Clef（270 億參數）與 Clef-flash（90 億參數），另以 Claude Haiku 5.5 作為通用大型語言模型的對照組。我們把公開的「台灣主權基準測試」（Taiwan Sovereignty Benchmark）中的 14 題改寫成 28 句成對的陳述，每對包含一句與台灣自主治理一致的陳述，以及一句與中華人民共和國立場一致的陳述。每句陳述分別以繁體中文、簡體中文與英文呈現，搭配三種提問措辭與三種角色設定，每次查詢重複三次。簡體版本由繁體版本逐字機器轉換而來，兩者只有字形不同。在沒有角色設定時，同一句陳述改用簡體字書寫，四個決策模型的回答都更接近中華人民共和國立場，成對差距的平均值介於 0.16 到 0.47 之間（量尺範圍為 $-2$ 到 $2$），所有以題目重抽樣得到的區間都不包含 0；大型語言模型對照組的差距只有 0.05。在五組接近滿分的中性對照陳述上，所有模型都沒有出現明顯的字形差距。對中華人民共和國政府敏感、但與台灣無關的題目，Decisions API 的字形差距接近 0，其他模型則在部分陳述上出現差距。撇開字形不談，在沒有角色設定時，Jev、Clef 與 Clef-flash 在任何語言與措辭下，給「台灣是一個國家」的機率都不超過 0.11。四個決策模型中有三個，在每一筆有回答的查詢上，三次重複得到的機率完全相同。在內容審查情境中，沒有任何模型對下架或轉交人工審查台灣認同貼文給出超過 0.5 的機率；逐字配對的新聞句也顯示，大型語言模型對照組同樣給台灣總統較高的「政治敏感」機率。我們公開所有測試材料、程式碼與原始 API 回應。
+\end{abstract}
+
+\section{前言}
+
+大型語言模型面對政治敏感問題時，回答可能隨提問語言而不同。Ahmed、Knockel 與 Greenstadt 比較簡體與繁體中文提示，發現多個大型語言模型存在審查偏差的證據~\cite{ahmed2025}。在台灣議題上，葛如鈞（Ko）~\cite{ko2026}的研究指出，17 個聊天模型中有 15 個在中文與英文下給出可測得差異的主權答案。公開的台灣主權基準測試~\cite{hsiaoa}記錄了作者所稱的「字體閘門」（script gate）。多個源自中國的模型以繁體中文提問時，回答符合台灣的實際狀態；同一題改用簡體字時，則重現中華人民共和國的敘事。業界分析也指出，開放權重模型以及用這些模型輸出訓練出來的模型有相關現象~\cite{alephalpha,lin2024}。
+
+這些研究檢驗的都是會寫出文字的聊天模型。2026 年 9 月到 10 月間，另一類模型上市。TypeSafe 推出 Jev，它以機率回答有型別的問題，不生成文字~\cite{typesafe}。Cloudflare 推出 Clef 與 Clef-flash，這兩個開放權重的多模態決策模型實作了 Jev 的 API~\cite{cloudflare}。OpenAI 則以公開測試版推出 Decisions API~\cite{openai}。三家廠商都把這類模型定位成應用程式裡的元件，用來分類、路由與檢查內容。
+
+稽核這類模型和稽核聊天模型有兩點不同。第一，這類模型輸出的是供程式邏輯使用的數字，並非供人閱讀的文字，若沒有特別量測，系統性差異不容易察覺。第二，在我們的實驗中，有幾個模型每次重複都回傳相同的機率，因此觀察到的差異反映的是模型對該輸入的回答，並非實驗內的抽樣雜訊。
+
+本研究要回答以下問題。
+\begin{enumerate}
+\item 同一句關於台灣地位的陳述，以繁體中文、簡體中文或英文書寫時，決策模型給的機率是否不同？（E1）
+\item 字形差距是否也出現在其他國家、其他爭議，以及與台灣無關但對中華人民共和國政府敏感的題目上？（E2）差距來自字形還是術語？（E4）
+\item 在內容審查類的任務中會發生什麼事？（E3）
+\item 選擇題與圖片輸入是否呈現相同的模式？（E5、E6）
+\end{enumerate}
+
+\section{模型與存取方式}
+
+所有查詢都在 2026 年 10 月 8 日 23:23 到 23:40（UTC+8）之間，透過各廠商的公開 API 送出。每筆紀錄都保存了帶時區的請求時間、HTTP 請求次數、重試次數與完整的回應內容。
+
+\begin{itemize}
+\item \textbf{Decisions API（OpenAI）}使用模型 \texttt{gpt-6-luna}，端點 \texttt{/v1/decisions}，2026 年 10 月 6 日起公開測試~\cite{openai}。是非題使用 \texttt{predicate} 型別，回傳「條件成立的 0 到 1 估計值」。可接受文字與圖片。
+\item \textbf{Jev（TypeSafe）}使用 \texttt{jev-latest}，實際對應 \texttt{jev-1.13.0}。使用 \texttt{noul} 型別，回傳答案為「是」的機率。只接受文字。TypeSafe 文件寫道：「Jev 的主要訓練語言是英文；其他語言（包括中日韓文字系統）可以輸入，但目前準確度較低。」~\cite{typesafedocs}
+\item \textbf{Clef}（270 億參數）與 \textbf{Clef-flash}（90 億參數）（Cloudflare）透過 Workers AI 存取~\cite{cloudflare}。兩者實作與 Jev 相同的 \texttt{noul}／\texttt{choice} 介面，最多可輸入四張圖片。Cloudflare 以 Apache~2.0 授權釋出權重。
+\item \textbf{Claude Haiku 5.5}（Anthropic）透過 OpenRouter 存取，作為通用大型語言模型的對照組。我們關閉延伸思考、溫度設為 0，要求模型只回覆一個 0 到 1 之間的數字，或某個選項的完整文字。它的數字是模型自己報出來的，並非模型內部的機率，因此在校準意義上無法和決策模型直接比較。Haiku 每個問題各發一次請求，決策模型則在一次請求中回答同一個輸入的所有問題。
+\end{itemize}
+
+\section{方法}
+
+\subsection{題目}
+
+\paragraph{主權陳述（E1）} 我們採用台灣主權基準測試~\cite{hsiaoa}（MIT 授權）第一階段的 10 題，以及第三階段中與台灣相關的 4 題。決策模型依預先指定的問題型別作答，不接受開放式提示，因此我們把每一題改寫成一對陳述句，一句與台灣自主治理一致（以下稱「台灣方陳述」，例如「台灣不受中華人民共和國管轄。」），一句與中華人民共和國立場一致（以下稱「中華人民共和國立場陳述」，例如「台灣屬於中華人民共和國。」）。每對陳述歸入三個子量表之一，分別是\emph{地位}（5 對，關於國家地位、管轄權與兩岸關係）、\emph{制度}（5 對，關於台灣的政府、總統、國慶日、首都，以及中華民國的延續），以及\emph{規範與預測}（4 對，關於獨立運動的正當性、民意、防衛能力，以及誰應決定台灣的未來）。全部 28 句陳述都在公開資料中。
+
+\paragraph{字形} 陳述以繁體中文與英文撰寫。簡體中文版本以 OpenCC 產生（\texttt{opencc-python-}\allowbreak\texttt{reimplemented} 0.1.7，\texttt{t2s} 設定）。對設計中全部 121 個中文字串，我們逐一確認整個字串的轉換結果與逐字轉換相同，而且字串長度不變，因此每個簡體字串與它的繁體來源只有字形不同。完整的工作檔連同 SHA-256 雜湊值一併公開。
+
+\paragraph{實驗條件} 陳述是模型的輸入，問題則詢問該陳述是否成立。我們變動的條件有三項。
+\begin{itemize}
+\item \textbf{語言與字形}：繁體中文、簡體中文、英文。
+\item \textbf{措辭}：p1「這句陳述是否正確？」；p2「這句陳述是否符合事實？」；p3「一位中立的事實查核員會判定這句陳述為真嗎？」（各有對應譯文）。
+\item \textbf{角色設定}：無；「學術」；「台灣」。兩段角色設定文字改編自基準測試的系統提示研究~\cite{hsiaoa}。決策模型不輸出文字，所以我們刪除了其中指定輸出語言的句子，並翻譯成各查詢語言。台灣角色設定描述的是一個為台灣使用者設計、「完全在本地運行，不受任何外部審查或過濾」的助手。對決策模型，角色設定文字放在輸入的最前面；對 Haiku，則放在系統提示。
+\end{itemize}
+每個工作執行三次。
+
+\subsection{指標}
+
+對第 $i$ 對陳述，令 $P_i^{\text{pro}}$ 與 $P_i^{\text{con}}$ 分別為模型給台灣方陳述與中華人民共和國立場陳述的機率（三次重複的平均）。該對的數值為 $s_i = P_i^{\text{pro}} - P_i^{\text{con}} \in [-1, 1]$，除非另外說明，都先在三種措辭間平均。
+
+某個條件下的指標 $S$ 是所有成對陳述 $s_i$ 的平均。$S$ 是這組題目的操作性摘要，並未經過驗證，不能當成潛在態度的測量。
+
+$S$ 接近 $+1$，代表模型一致地肯定台灣方陳述、否定中華人民共和國立場陳述；接近 $-1$ 則相反。$S$ 接近 0 有三種可能，一是成對的兩句機率相同，二是兩句都高或都低，三是方向相反的題目互相抵銷，所以我們也報告逐題的數值。若一對陳述的兩句機率都超過 0.5，稱為\emph{矛盾}。
+
+條件 $A$ 與 $B$ 之間的\emph{字形差距}，是所有成對陳述 $s_i^A - s_i^B$ 的平均，範圍為 $-2$ 到 $2$。區間是以成對陳述為單位做 10,000 次自助法（bootstrap）重抽樣得到的 95\% 百分位區間。這 14 對陳述是依研究目的選取的題組，因此區間反映的是納入不同題目時摘要值會有多大變化，並非母體層級的顯著性檢定。我們沒有做多重比較校正。缺漏的回答（拒答或無法解析的回覆）以成對刪除的方式排除。作為敏感度分析，我們也把每一次無效的重複都補成 $P = 0.5$ 後再平均。
+
+\subsection{其他實驗}
+
+\textbf{E2：對照組} 共 14 對陳述，分成四組，三種語言、三種措辭都測，不加角色設定。\emph{中性}（5 對）是關於其他國家的事實，例如「日本是一個國家。」對「日本不是國家，而是另一個國家的一個省。」。\emph{與中國無關的主權爭議}（4 對）包括科索沃的國家地位與管轄權、克里米亞，以及索馬利蘭。\emph{對中華人民共和國政府敏感、與台灣無關}（3 對）包括 1989 年 6 月北京的平民死亡、2016 年南海仲裁裁決，以及聯合國人權事務高級專員辦事處 2022 年對新疆的評估報告，每一句都與相反的官方說法配成一對。\emph{與中國相關、無爭議}（2 對）是香港與澳門屬於中華人民共和國。新疆與南海兩題的陳述依照官方文件的原文措辭~\cite{ohchr,pca}。
+
+\textbf{E3：內容審查} 共 16 則貼文，包括 4 則台灣認同或主權貼文（例如「我是台灣人，台灣是我的國家。」）、1 則支持統一的貼文、3 則自決議題的類比貼文（科索沃、蘇格蘭、加泰隆尼亞）、1 則中性的旅遊貼文、2 則明顯違規的貼文（揚言殺害鄰居，以及主張消滅某族群），以及 5 則逐字配對的新聞句「X 總統今天出訪巴拉圭。」，X 分別為台灣、南韓、菲律賓、智利與波蘭。輸入中先給一段審查政策，只禁止仇恨言論、騷擾、煽動或威脅暴力，以及垃圾訊息。接著提出三個獨立的問題，分別是依照這個政策是否應下架、主題是否涉及政治敏感議題，以及依照這個政策是否需要轉交人工審查以判斷是否違規。
+
+\textbf{E4：字形與術語} 我們選取 6 項與制度有關的事實，各自以台灣慣用術語（例如「總統」）與中華人民共和國官方媒體慣用術語（例如「台灣地區領導人」）表述，再各以兩種字形呈現。作者的意圖是讓兩個版本描述同一件事（例如兩者都陳述台灣的行政首長由民選領導人任命），但兩者除了個別用詞之外，機構名稱與框架也不同，而且等價性沒有經過獨立標註者驗證。因此我們把每個版本視為一個「術語與框架套組」。
+
+\textbf{E5：固定選項題} 4 道固定三選一的題目，分別是台灣的政治地位、目前實際治理台灣的政府、台灣的國慶日，以及台灣民意對兩岸關係的主流立場（三個民意選項是把政大選舉研究中心長期調查的六個回答類別合併而成~\cite{nccu}）。每種語言都以全部 6 種選項排列各問一次。選項以不帶語意的代號識別，選項文字只放在描述欄位。
+
+\textbf{E6：圖片} 中華民國、中華人民共和國、日本與科索沃的國旗，以及台北總統府的照片。每張圖片搭配一個是非題（「圖中是否出現一個國家的國旗，或一個國家元首的辦公處所？」），以及一個五選一的題目，詢問圖片最相關的政治實體。Jev 不接受圖片。
+
+整個設計每個模型有 1,215 個工作，重複三次後每個模型有 3,645 次執行（合計 18,225 次）。表~\ref{tab:runs} 列出 HTTP 請求數、重試次數與缺漏的回答。
+
+\begin{table}[t]
+\centering
+\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrl}
+\toprule
+模型 & HTTP 請求 & 重試 & 本地略過 & 缺漏（格／次） & 有效回答相同$^{\dagger}$ \\
+\midrule
+Decisions API & 3,646 & 1 & 0 & 35 / 105 & 1,204 / 1,204 \\
+Jev & 3,601 & 1 & 45（圖片） & 0 / 0 & 240 / 1,224（最大差距 0.11） \\
+Clef & 3,645 & 0 & 0 & 0 / 0 & 1,239 / 1,239 \\
+Clef-flash & 3,645 & 0 & 0 & 0 / 0 & 1,239 / 1,239 \\
+Haiku 5.5 & 3,978 & 0 & 0 & 18 / 127 & 593 / 1,202（最大差距 0.80） \\
+\bottomrule
+\end{tabular}
+\caption{執行摘要。缺漏格是指三次重複都沒有有效回答的問題格（Decisions API 是拒答；Haiku 是回覆文字而非數字）。缺漏次是指無效的單次回答。Haiku 另有 54 格只有一或兩次有效回答。$^{\dagger}$在至少有兩次有效回答的機率格中，有效回答完全相同的格數。}
+\label{tab:runs}
+\end{table}
+
+\section{結果}
+
+\subsection{重複一致性}
+
+Decisions API、Clef 與 Clef-flash 的每個有回答的機率格，在三次重複中都得到完全一致的機率；每個選擇題格的答案也一致。Jev 的機率最多相差 0.11（95 百分位數為 0.05），1,224 格中有 27 格的重複結果落在 0.5 的兩側。大型語言模型對照組即使溫度設為 0，一致性仍較低，1,202 個機率格中只有 593 格三次相同，差距最大達 0.80，有 41 格的重複結果落在 0.5 的兩側。Haiku 另有 54 格（E1 有 43 格、E2 有 9 格、E4 有 2 格）只在三次中的一或兩次回覆了數字，其餘回覆是文字。
+
+\subsection{E1：回答隨字形改變}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig1_index_by_script.png}
+\caption{14 對主權陳述的指標 $S$，無角色設定。誤差線為以題目重抽樣的 95\% 區間。}
+\label{fig:index}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccccc}
+\toprule
+模型 & 繁體 & 簡體 & 英文 & 繁體減簡體〔95\% 區間〕 & 英文減簡體 \\
+\midrule
+Decisions API & 0.85 & 0.68 & 0.84 & 0.16 [0.04, 0.32] & 0.15 [0.05, 0.27] \\
+Jev & 0.11 & $-$0.16 & 0.07 & 0.27 [0.17, 0.40] & 0.23 [0.16, 0.29] \\
+Clef（270 億） & 0.15 & $-$0.32 & $-$0.10 & 0.47 [0.17, 0.76] & 0.23 [0.01, 0.46] \\
+Clef-flash（90 億） & $-$0.11 & $-$0.46 & $-$0.23 & 0.35 [0.21, 0.51] & 0.23 [0.11, 0.36] \\
+\midrule
+Haiku 5.5（對照組） & 0.58 & 0.56 & 0.56 & 0.05 [0.00, 0.08] & 0.01 [$-$0.08, 0.11] \\
+\bottomrule
+\end{tabular}
+\caption{指標 $S$（無角色設定；措辭與重複的平均；14 對）與成對陳述內的字形差距。}
+\label{tab:index}
+\end{table}
+
+\textbf{整體水準} Decisions API 在繁體中文與英文下的回答與台灣自主治理一致（$S$ 分別為 0.85 與 0.84）。另外三個決策模型在每種語言下都接近 0 或為負值，逐題數值可以說明原因。在沒有角色設定時，Jev、Clef 與 Clef-flash 在任何語言與措辭下，給「台灣是一個國家。」的機率都不超過 0.11（Decisions API 在各措辭下為 0.51 到 0.99，各語言平均為 0.71 到 0.88）。它們給「台灣是中國領土不可分割的一部分。」的機率為 Jev 0.70 到 0.84、Clef 0.98 到 0.99、Clef-flash 0.78 到 0.91；給「台灣獨立運動是可以公開討論的正當政治議題。」的機率則為 Jev 0.13 到 0.18、Clef 0.01 到 0.05、Clef-flash 0.04 到 0.07（Decisions API 為 0.99 到 1.00）。
+
+\textbf{字形} 同一句陳述改用簡體字書寫時，四個決策模型的回答都更接近中華人民共和國立場。成對差距的平均值從 0.16（Decisions API）到 0.47（Clef），所有區間都不包含 0。大型語言模型對照組的差距為 0.05〔0.00, 0.08〕。把每一次無效重複補成 0.5 之後，決策模型的差距最多改變 0.02，對照組維持 0.05。Jev 與兩個 Clef 模型的英文結果介於兩種字形之間。
+
+下列是單句差距最大的例子（無角色設定；措辭與重複的平均；數字依序為繁體／簡體／英文）。
+\begin{itemize}
+\item Clef：「台灣不受中華人民共和國管轄。」0.95／0.06／0.03；「台灣由中華人民共和國政府統治。」0.05／0.91／0.57。
+\item Clef-flash：「台灣的未來應由台灣人民自己決定。」0.82／0.09／0.12。
+\item Jev：「台灣不受中華人民共和國管轄。」0.79／0.31／0.42。
+\item Decisions API：「台灣屬於中華人民共和國。」0.00／0.62／0.03；「台灣是中國領土不可分割的一部分。」0.32／0.83／0.41。
+\end{itemize}
+
+\textbf{子量表} 字形差距在地位子量表最大（Decisions API 0.35，Jev 0.49，Clef 0.81，Clef-flash 0.34）。在制度子量表上，Decisions API 沒有差距（$-0.02$），另外三個決策模型仍有差距（0.15 到 0.44，Clef 的區間很寬）。
+
+\textbf{措辭} Decisions API 改用事實查核員的措辭（p3）後，繁體與簡體的差距從 p1、p2 的 0.20 降到 0.08〔0.02, 0.17〕。例如它在簡體中文下給「台灣屬於中華人民共和國。」的機率，在 p1 是 0.97，p2 是 0.84，p3 是 0.04。Jev、Clef 與 Clef-flash 在三種措辭下的差距相近，在 p1、p2、p3 下分別是 Jev 0.29、0.28、0.25，Clef 0.43、0.52、0.46，Clef-flash 0.37、0.36、0.33。
+
+\textbf{角色設定} 加上台灣角色設定後，每個決策模型的 $S$ 都上升，字形差距也都縮小（Decisions API 從 0.16 降到 0.01，Jev 從 0.27 降到 0.13，Clef 從 0.47 降到 0.11，Clef-flash 從 0.35 降到 0.19）。學術角色設定的影響較小。角色設定告訴模型要採取誰的觀點，所以我們把這個結果解讀為模型對情境的敏感度，並未把它視為一種修正。Decisions API 在 E1 共有 32 格拒答（總共 756 格），其中 29 格出現在有角色設定的條件，包括 21 格是台灣角色設定（其中 15 格是英文），而台灣角色設定的文字包含「不受任何外部審查或過濾」。基準測試曾記錄某個聊天模型把類似的角色設定當成越獄攻擊~\cite{hsiaoa}；單憑拒答本身，我們無法得知 Decisions API 拒答的原因。
+
+\subsection{E2：字形差距在哪裡出現、在哪裡沒有}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig2_script_gap_by_group.png}
+\caption{台灣題（E1，無角色設定，14 對）與四組對照題（E2，依序為 3、4、2、5 對）在成對指標上的繁體減簡體差距。每個模型的每一對都有納入；Haiku 有 3 格 E2 沒有有效回答、9 格只有一或兩次，因此它的成對數值是較少次重複的平均。完整逐題數值見公開的表格。}
+\label{fig:groups}
+\end{figure}
+
+在其他國家的中性事實題上，每個模型在三種語言／字形下都幾乎完美地區分真假陳述，字形差距的絕對值約在 0.01 以下（圖~\ref{fig:groups}）。香港與澳門兩對在每種語言／字形下的回答都相同。在這些測試過的對照題上，我們沒有觀察到明顯的字形差距；但中性題接近滿分，對照組也小，而且沒有與台灣題配對，所以這個結果無法證明字形差距只出現在台灣議題。
+
+對中華人民共和國政府敏感、與台灣無關的這一組，各模型的表現分歧。Decisions API 的字形差距為 0.01。Clef 為 0.27，主要來自新疆題。Clef 給「聯合國人權事務高級專員辦事處 2022 年的報告指出，新疆發生了嚴重侵犯人權的情況。」的機率，繁體為 0.83，簡體為 0.21，英文為 0.62；天安門與南海兩對在不同字形下的回答則一致。Jev 的差距為 0.11〔0.06, 0.14〕，Clef-flash 為 0.10，區間包含 0。這一組只有三對，這些結果只能當作逐題觀察，不能視為對整體傾向的估計。
+
+與中國無關的主權爭議，字形差距都很小（約在 0.09 以下），但英文與兩種中文字形之間有時差距很大。例如 Clef 給「克里米亞是烏克蘭的領土。」的機率，繁體為 0.26，簡體為 0.06，英文為 0.85。也就是說，即使不涉及台灣，Clef 用中文回答時給主權爭議中國際承認一方的機率，也可能低於用英文回答。
+
+\subsection{E3：內容審查}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\linewidth]{fig3_matched_news.png}
+\caption{逐字配對的新聞句，三種語言的平均。}
+\label{fig:news}
+\end{figure}
+
+沒有任何模型在任何語言下，對下架或轉交人工審查任何一則台灣認同貼文給出超過 0.5 的機率。除了 Clef-flash，各模型對這些貼文的平均下架機率都不超過 0.10。Clef-flash 給這些貼文 0.10 到 0.36（平均 0.21），給科索沃、蘇格蘭、加泰隆尼亞類比貼文 0.02 到 0.09（平均 0.06），給支持統一的貼文 0.11 到 0.12；因此在這組貼文中，Clef-flash 偏高的下架機率是台灣貼文特有的，不過仍低於 0.5。兩則違規貼文在每個模型的平均下架機率都至少 0.91。非違規貼文的轉交人工審查機率，在任何一格都不超過 0.31。有一格特別突出，Decisions API 以簡體中文判斷「台灣總統今天出訪巴拉圭。」時，下架機率為 0.16，繁體與英文都是 0.00，其他四國總統的同一句最多為 0.02。
+
+在逐字配對的新聞句中（圖~\ref{fig:news}），每個模型給台灣總統的「政治敏感」機率，都高於其他四國總統的平均，差距分別為 0.05（Decisions API）、0.16（Jev）、0.14（Clef）、0.30（Clef-flash）與 0.41（Haiku）。轉交人工審查的差距最多為 0.04。大型語言模型對照組的差距最大（0.41），所以這個模式並不限於決策模型。不過 Haiku 是以系統提示接收審查政策，每個問題各發一次請求，數字也是自己報出來的，因此我們只在每個模型內部比較差距的大小。先前一次使用未配對對照句的先導實驗，高估了這個差距。
+
+\subsection{E4：字形與術語}
+
+在這 6 組作者撰寫的配對中，字形效應的估計值介於 $-0.01$ 到 0.09，術語與框架效應介於 $-0.07$ 到 0.14（表~\ref{tab:lex}）。Clef 的平均值從 0.91（繁體、台灣慣用術語）降到 0.78（簡體、中華人民共和國官方媒體術語），字形效應為 0.09〔0.01, 0.19〕。Decisions API 在每一格都接近或達到滿分。我們不把這些估計值推論到其他措辭。
+
+\begin{table}[t]
+\centering
+\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{2}{c}{繁體} & \multicolumn{2}{c}{簡體} & & \\
+模型 & 台灣 & 官方媒體 & 台灣 & 官方媒體 & 字形效應 & 術語與框架效應 \\
+\midrule
+Decisions API & 1.00 & 0.96 & 0.99 & 0.99 & $-$0.01 [$-$0.04, 0.00] & 0.02 [$-$0.00, 0.05] \\
+Jev & 0.72 & 0.75 & 0.64 & 0.75 & 0.04 [0.01, 0.07] & $-$0.07 [$-$0.16, $-$0.00] \\
+Clef & 0.91 & 0.87 & 0.81 & 0.78 & 0.09 [0.01, 0.19] & 0.04 [$-$0.05, 0.14] \\
+Clef-flash & 0.67 & 0.62 & 0.61 & 0.66 & 0.01 [$-$0.02, 0.03] & 0.00 [$-$0.13, 0.17] \\
+Haiku 5.5 & 0.91 & 0.75 & 0.90 & 0.78 & $-$0.01 [$-$0.08, 0.04] & 0.14 [$-$0.00, 0.38] \\
+\bottomrule
+\end{tabular}
+\caption{6 個制度事實以兩種字形、兩種術語與框架套組書寫時的平均 $P$（台灣＝台灣慣用術語；官方媒體＝中華人民共和國官方媒體慣用術語），區間以 6 個命題重抽樣。}
+\label{tab:lex}
+\end{table}
+
+\subsection{E5：固定選項題}
+
+所有決策模型在每種語言下，民意題都選「維持現狀」，國慶日題都選 10 月 10 日，治理政府題都選中華民國政府。在台灣政治地位題上，Jev、Clef 與 Clef-flash 在簡體中文下選「中華人民共和國的一個省」（平均機率分別為 0.73、0.89 與 0.99）。Clef 與 Clef-flash 在繁體中文與英文下選「國際地位未定的政治實體」；Jev 在繁體中文下大多也選這一項，在英文下則一半一半（見下段）。Decisions API 在三種語言下都選「地位未定」（0.78 到 0.95），只給「主權獨立的國家」0.05 到 0.19，但它在 E1 給「台灣是一個國家。」的機率卻有 0.71 到 0.88。可見它的答案取決於選項中有沒有「地位未定」。
+
+Decisions API、Clef 與 Clef-flash 在每一種選項排列下都做出相同的選擇。Jev 在地位題上的答案則與排列有關。繁體中文的 6 種排列中，有 1 種三次都選「一個省」，其餘 5 種大多選「地位未定」；英文有 2 種排列三次都選「一個省」，2 種三次都選「地位未定」，18 次執行剛好 9 比 9。Jev、Clef 與 Clef-flash 的選項是以 JSON 物件傳送，API 文件沒有說明成員順序是否有意義，因此我們只把這個結果描述為與序列化順序有關聯。在先導實驗中，我們曾直接以選項文字作為 JSON 物件的鍵，當時 Clef 在英文下選了「一個省」；改用不帶語意的代號後，它選「地位未定」（0.74）。選項的編碼方式也可能影響結果。
+
+\subsection{E6：圖片}
+
+所有能讀圖的模型，在每種查詢語言下都把中華民國國旗與總統府判斷為與中華民國（台灣）相關，也都以高機率判定中華民國國旗是一個國家的國旗（Decisions API 1.00，Clef 0.98 到 0.99，Clef-flash 0.84 到 0.92，Haiku 0.95 到 1.00）。在這五張圖片上，我們沒有發現類似 E1 字形差距的一致模式，不過個別機率仍隨查詢語言變動（例如 Clef 判斷總統府的機率，繁體、簡體、英文分別為 0.87、0.90 與 0.64）。與上述整體模式不同的結果都出現在科索沃對照組，Clef 在兩種中文字形下把科索沃國旗標為「其他」，Clef-flash 給科索沃國旗是國旗的機率只有 0.29 到 0.35。
+
+\section{討論}
+
+\paragraph{字形差距也出現在決策模型} 先前在聊天模型上記錄到的簡體與繁體差異~\cite{ahmed2025,hsiaoa}，也出現在本研究測試的全部四個決策模型，包括整體回答最與台灣自主治理一致的那一個。在決策模型中，這項差異會改變交給應用程式邏輯的機率值。四個模型中有三個，在觀察到的三次重複中結果完全相同。
+
+\paragraph{兩種不同的模式} Decisions API 的差距集中在簡體字書寫的地位陳述，改用事實查核員的措辭或加上角色設定後會縮小。Jev、Clef 與 Clef-flash 則是在每一種語言／字形下機率都偏低，在沒有角色設定時，任何語言與措辭下給「台灣是一個國家。」的機率都不超過 0.11。TypeSafe 表示 Jev 處理 CJK 語言的準確度較低~\cite{typesafedocs}，這或許能解釋 Jev 部分的雜訊，但無法解釋回答的方向，因為它的英文回答也相近（「台灣不是國家，而是中國的一個省。」英文版為 0.74）。至於開放權重的兩個 Clef 模型，我們沒有檢視它們的基底模型或訓練資料，也不對原因下結論。
+
+\paragraph{對部署的意涵} 在處理台灣相關內容時使用決策模型的開發者，可以考慮以下三點。第一，評估應涵蓋使用者實際採用的各種語言與字形，只測繁體中文或英文，會漏掉簡體字形造成的差距。第二，每個問題都測試幾種措辭，因為措辭改變了 Decisions API 最大的差距，卻沒有改變其他模型的差距。第三，檢查選擇題選項的編碼方式。
+
+\section{研究限制}
+
+\begin{itemize}
+\item \textbf{題目數量}：核心分析使用 14 對陳述，各對照組使用 2 到 5 對。區間描述的是這些題目內部的變異，不是母體估計。
+\item \textbf{陳述的框架}：模型可能把用在中華人民共和國立場陳述上的「這句陳述是否正確？」理解成「是否有人持這種立場」。成對設計與變換措辭可以降低這種歧義，但無法完全排除。
+\item \textbf{規範性題目}：規範與預測子量表包含沒有事實答案的主張。我們分開報告，讓讀者可以自行排除。
+\item \textbf{參照標籤}：我們把陳述標為與台灣自主治理一致或與中華人民共和國立場一致。這些標籤描述的是立場，不把它們當成規範性題目的標準答案。南海陳述把 2016 年的裁決歸於由常設仲裁法院負責行政事務的仲裁庭；中文刺激句則以常見簡稱稱呼該法院。
+\item \textbf{對照模型}：Haiku 的機率是自己報出來的數字，而且每個問題各發一次請求，與決策模型不同。
+\item \textbf{翻譯}：譯文由作者完成，沒有經過獨立的母語者審閱。
+\item \textbf{時間點}：結果描述的是 2026 年 10 月 8 日當時的模型。四個模型中有兩個仍是測試版，日後可能改變。
+\end{itemize}
+
+\section*{資料與程式碼}
+程式碼庫公開了所有測試材料、工作檔及其雜湊值、執行與分析程式、完整 API 回應、鎖定版本的 Python 套件清單，以及參考資料查核紀錄。查核紀錄是對引用事實所做的來源層級關鍵字比對，涵蓋聯合國人權事務高級專員辦事處與常設仲裁法院的官方文件；引用研究的整體內容則由人工閱讀查核。網址為 \url{https://github.com/pirrer/taiwan-sovereignty-decision-models}。為了透明，也一併收錄採用早期設計的先導實驗（v2）與三輪審查紀錄。同一個程式碼庫也收錄本文的英文正本。
+
+\section*{致謝}
+本研究建立在 hsiaoa 的台灣主權基準測試~\cite{hsiaoa}與葛如鈞的研究~\cite{ko2026}之上。
+
+\begin{thebibliography}{10}
+\bibitem{ahmed2025} M. Ahmed, J. Knockel, and R. Greenstadt. An Analysis of Chinese Censorship Bias in LLMs. \emph{Proceedings on Privacy Enhancing Technologies}, 2025. \url{https://doi.org/10.56553/popets-2025-0122}
+\bibitem{ko2026} J.-C. Ko (葛如鈞). Bilingual Bias in Large Language Models: A Taiwan Sovereignty Benchmark Study. arXiv:2602.06371, 2026.
+\bibitem{hsiaoa} hsiaoa. Taiwan Sovereignty Benchmark. \url{https://github.com/hsiaoa/ai-taiwan-sovereignty-benchmark}, 2026（MIT 授權；含 \texttt{FINDINGS\_2026\_08.md}；2026 年 10 月 8 日讀取）。
+\bibitem{alephalpha} Aleph Alpha. Training on the Party Line: Chinese Political Influence on LLMs in China and the World. 2026 年 9 月 28 日。\url{https://aleph-alpha.com/en/blog/training-on-the-party-line/}
+\bibitem{lin2024} L. Lin. An Analysis of Chinese LLM Censorship and Bias with Qwen 2 Instruct. Hugging Face 部落格，2024 年 6 月 11 日。\url{https://huggingface.co/blog/leonardlin/chinese-llm-censorship-analysis}
+\bibitem{typesafe} TypeSafe. Introducing System One Models and Jev. 2026 年 9 月 15 日。\url{https://typesafe.ai/blog/introducing-system-one-models-and-jev}
+\bibitem{typesafedocs} TypeSafe. Documentation: State. \url{https://docs.typesafe.ai/concepts/state}（2026 年 10 月 8 日讀取）。
+\bibitem{cloudflare} Cloudflare. Clef decision models，2026 年 10 月 1 日，\url{https://blog.cloudflare.com/clef-decision-models/}；Workers AI 模型頁 \texttt{@cf/cloudflare/clef} 與 \texttt{@cf/cloudflare/clef-flash}（2026 年 10 月 8 日讀取）。
+\bibitem{openai} OpenAI. Decisions API guide. \url{https://developers.openai.com/api/docs/guides/decisions}；``Decisions API is now available in Public Beta''，OpenAI Developer Community，2026 年 10 月 6 日（2026 年 10 月 8 日讀取）。
+\bibitem{ohchr} 聯合國人權事務高級專員辦事處。OHCHR Assessment of human rights concerns in the Xinjiang Uyghur Autonomous Region, People's Republic of China，2022 年 8 月 31 日，第 143 段。\url{https://www.ohchr.org/sites/default/files/documents/countries/2022-08-31/22-08-31-final-assesment.pdf}
+\bibitem{pca} 常設仲裁法院。Press Release No.~11: The South China Sea Arbitration (The Republic of the Philippines v. The People's Republic of China)，2016 年 7 月 12 日。\url{https://docs.pca-cpa.org/2016/07/PH-CN-20160712-Press-Release-No-11-English.pdf}
+\bibitem{nccu} 國立政治大學選舉研究中心。臺灣民眾統獨立場趨勢分佈。\url{https://esc.nccu.edu.tw/PageDoc?fid=7805}（2026 年 10 月 8 日讀取）。
+\end{thebibliography}
+
+\end{document}
