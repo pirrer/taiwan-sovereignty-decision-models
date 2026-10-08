@@ -8,6 +8,18 @@ Shang Nung Hsiao · Independent Researcher, Taipei · fox@whenyousay.no
 
 ---
 
+## In plain language
+
+**Why we did this.** More and more apps let AI make quiet decisions behind the scenes: whether a post gets taken down, which team a support ticket goes to. A new kind of AI built for this job does not write text. It only returns the probability that the answer is yes or no, so users never see how it reached its decision. We wanted to know how these models treat Taiwan, and whether their answers change with the way a question is written.
+
+**What we did.** We wrote 28 sentences about Taiwan. Half match Taiwan's self-governance, such as "Taiwan is not under the jurisdiction of the People's Republic of China." The other half match the position of the People's Republic of China, such as "Taiwan belongs to the People's Republic of China." We asked four of these models, from OpenAI, TypeSafe and Cloudflare, about every sentence in Traditional Chinese, Simplified Chinese and English, three times each: more than 18,000 queries including a control model. The Simplified versions were converted character by character from the Traditional ones, so the meaning is identical and only the writing system differs.
+
+**What we found.** Write the same sentence in Simplified characters, and all four models lean toward the position of the People's Republic of China. Cloudflare's Clef, for example, puts the chance that "Taiwan is not under the jurisdiction of the PRC" is true at 95% in Traditional Chinese and 6% in Simplified Chinese. Ordinary facts about other countries, such as "Japan is a country", do not change this way, and a general chat model used as a control (Claude Haiku) barely moves. Three of the four models also put the chance that "Taiwan is a country" is true at 11% or less, in every language, when no extra instructions are given.
+
+**Why it matters.** The judgement is buried in software. The same model can treat a user writing in Traditional Chinese differently from one writing in Simplified Chinese, and neither will see it. Anyone using these models on content about Taiwan should test them in Traditional Chinese, Simplified Chinese and English.
+
+---
+
 *Decision models* return probabilities over predefined answers instead of generated text, and are sold for classification, routing and moderation. We tested four of them on statements about Taiwan's status:
 
 - OpenAI **Decisions API** (`gpt-6-luna`)
