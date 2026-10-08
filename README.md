@@ -79,6 +79,14 @@ See `CITATION.cff`.
 
 Code: MIT. Data, results, figures and paper text: CC BY 4.0. The statements are adapted from the Taiwan Sovereignty Benchmark (MIT); see `THIRD_PARTY_NOTICES.md`. Image credits are in `images/CREDITS.md`.
 
+## Contributors
+
+- **Shang Nung Hsiao** (author): directed the study, approved its scope, design changes and publication, and is responsible for the content.
+- **Claude** (Anthropic, Claude Opus 5.5 in Claude Code): experiment design, data-collection and analysis code, analysis, English draft and Traditional Chinese translation.
+- **Codex** (OpenAI, `gpt-5.6-sol` via the Codex CLI): three rounds of adversarial review of the paper, data and code, and review of the Chinese translation (see `reviews/`).
+
+Following arXiv policy, the AI tools are not listed as paper authors. Both tools come from vendors whose models are evaluated here: Claude Haiku 5.5 (Anthropic) is the control model and the Decisions API (OpenAI) is one of the models tested.
+
 ## Acknowledgements
 
 This work extends the [Taiwan Sovereignty Benchmark](https://github.com/hsiaoa/ai-taiwan-sovereignty-benchmark) by hsiaoa, and builds on Ko (2026), [arXiv:2602.06371](https://arxiv.org/abs/2602.06371).

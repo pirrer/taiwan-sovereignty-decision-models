@@ -282,6 +282,9 @@ Decisions API、Clef 與 Clef-flash 在每一種選項排列下都做出相同�
 \section*{資料與程式碼}
 程式碼庫公開了所有測試材料、工作檔及其雜湊值、執行與分析程式、完整 API 回應、鎖定版本的 Python 套件清單，以及參考資料查核紀錄。查核紀錄是對引用事實所做的來源層級關鍵字比對，涵蓋聯合國人權事務高級專員辦事處與常設仲裁法院的官方文件；引用研究的整體內容則由人工閱讀查核。網址為 \url{https://github.com/pirrer/taiwan-sovereignty-decision-models}。為了透明，也一併收錄採用早期設計的先導實驗（v2）與三輪審查紀錄。同一個程式碼庫也收錄本文的英文正本。
 
+\section*{AI 工具使用說明}
+依照 arXiv 的規定，AI 工具不列為作者。Claude（Anthropic；Claude Code 中的 Claude Opus 5.5）協助實驗設計，撰寫資料蒐集與分析程式，執行分析，起草英文稿，並翻譯成繁體中文。OpenAI Codex（透過 Codex CLI 使用 \texttt{gpt-5.6-sol}）對論文、資料與程式做了三輪對抗式審查，並審查中文譯文；四份審查報告都收錄在程式碼庫中。作者主導本研究，核准研究範圍、設計變更與發表，並為全部內容負完全責任。兩個工具的開發商，都有模型是本研究的測試對象：Anthropic 的 Claude Haiku 5.5 是對照模型，OpenAI 的 Decisions API 是受測的決策模型之一。
+
 \section*{致謝}
 本研究建立在 hsiaoa 的台灣主權基準測試~\cite{hsiaoa}與葛如鈞的研究~\cite{ko2026}之上。
 

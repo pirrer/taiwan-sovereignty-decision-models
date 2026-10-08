@@ -88,6 +88,14 @@ python test_analyze.py
 
 程式碼採 MIT 授權；資料、結果、圖表與論文文字採 CC BY 4.0。陳述改寫自台灣主權基準測試（MIT 授權），詳見 `THIRD_PARTY_NOTICES.md`；圖片出處見 `images/CREDITS.md`。
 
+## 貢獻者
+
+- **蕭上農**（作者）主導研究，核准研究範圍、設計變更與發表，並為內容負責。
+- **Claude**（Anthropic，Claude Code 中的 Claude Opus 5.5）負責實驗設計、資料蒐集與分析程式、分析、英文初稿與繁體中文翻譯。
+- **Codex**（OpenAI，透過 Codex CLI 使用 `gpt-5.6-sol`）對論文、資料與程式做了三輪對抗式審查，並審查中文譯文（見 `reviews/`）。
+
+依照 arXiv 的規定，AI 工具不列為論文作者。兩個工具的開發商都有模型是本研究的測試對象，Anthropic 的 Claude Haiku 5.5 是對照模型，OpenAI 的 Decisions API 是受測模型之一。
+
 ## 致謝
 
 本研究延伸 hsiaoa 的[台灣主權基準測試](https://github.com/hsiaoa/ai-taiwan-sovereignty-benchmark)，並建立在葛如鈞的研究（[arXiv:2602.06371](https://arxiv.org/abs/2602.06371)）之上。
